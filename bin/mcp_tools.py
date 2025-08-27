@@ -483,7 +483,7 @@ class EncryptionManager:
         except ImportError:
             # Fallback to simple hash if cryptography not available
             import hashlib
-            return hashlib.md5(password_hash.encode()).digest()
+            return hashlib.sha256(password_hash.encode()).digest()
         except Exception as e:
             print(f"Warning: Failed to derive key from hash: {e}")
             return None

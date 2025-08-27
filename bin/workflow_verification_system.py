@@ -122,7 +122,7 @@ class WorkflowPathTracker:
     def _hash_path(self, path: List[str]) -> str:
         """Create hash of execution path."""
         path_string = "->".join(path)
-        return hashlib.md5(path_string.encode()).hexdigest()
+        return hashlib.sha256(path_string.encode()).hexdigest()
     
     def get_path_variations(self, base_path: List[str]) -> List[List[str]]:
         """Get variations of a base path to suggest alternatives."""
@@ -289,7 +289,7 @@ class WorkflowVerifier:
                                 workflow_steps: List[WorkflowStep],
                                 final_answer: str) -> WorkflowExecution:
         """Create execution record from workflow data."""
-        question_hash = hashlib.md5(original_question.encode()).hexdigest()
+        question_hash = hashlib.sha256(original_question.encode()).hexdigest()
         execution_path = [step.step_type for step in workflow_steps]
         total_time = sum(step.execution_time for step in workflow_steps)
         

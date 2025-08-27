@@ -223,7 +223,7 @@ class CredentialProtection:
         
         if credentials:
             # Store in temporary cache (not in agent memory)
-            cache_key = f"web_{hashlib.md5(url.encode()).hexdigest()}"
+            cache_key = f"web_{hashlib.sha256(url.encode()).hexdigest()}"
             self._credential_cache[cache_key] = credentials.copy()
             
             # Clear sensitive data from credentials dict
@@ -263,7 +263,7 @@ class CredentialProtection:
         
         if credentials:
             # Store in temporary cache
-            cache_key = f"api_{hashlib.md5(service_name.encode()).hexdigest()}"
+            cache_key = f"api_{hashlib.sha256(service_name.encode()).hexdigest()}"
             self._credential_cache[cache_key] = credentials.copy()
             
             # Return safe version
@@ -309,7 +309,7 @@ class CredentialProtection:
         
         if credentials:
             # Store in temporary cache
-            cache_key = f"db_{hashlib.md5(f"{database_type}_{host}".encode()).hexdigest()}"
+            cache_key = f"db_{hashlib.sha256(f"{database_type}_{host}".encode()).hexdigest()}"
             self._credential_cache[cache_key] = credentials.copy()
             
             # Return safe version

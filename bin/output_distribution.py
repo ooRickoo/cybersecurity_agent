@@ -8,7 +8,7 @@ CIFS/SMB, NFS, object storage, SSH, FTP, SCP, and streaming to TCP/UDP ports.
 import json
 import logging
 import socket
-import ftplib
+import ftplib  # SECURITY WARNING: FTP is insecure. Consider using SFTP/SCP instead.
 import paramiko
 import smbclient
 import smbprotocol
@@ -289,7 +289,8 @@ class OutputDistributor:
         try:
             # Create SSH client
             ssh_client = paramiko.SSHClient()
-            ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            # SECURITY: Use RejectPolicy instead of AutoAddPolicy to prevent MITM attacks
+            ssh_client.set_missing_host_key_policy(paramiko.RejectPolicy())
             
             # Connect to host
             if credentials.get('key_file'):
@@ -371,8 +372,15 @@ class OutputDistributor:
     
     def _distribute_via_ftp_standard(self, source_path: Path, host: str, port: int, 
                                     remote_path: str, credentials: Dict[str, str]) -> Dict[str, Any]:
-        """Distribute file via standard FTP."""
+        """Distribute file via standard FTP.
+        
+        SECURITY WARNING: FTP transmits data in plaintext and is vulnerable to 
+        man-in-the-middle attacks. Consider using SFTP/SCP for secure file transfer.
+        """
         try:
+            # SECURITY WARNING: FTP is insecure - credentials and data are transmitted in plaintext
+            logger.warning("SECURITY WARNING: Using insecure FTP protocol. Consider SFTP/SCP instead.")
+            
             # Connect to FTP server
             ftp = ftplib.FTP()
             ftp.connect(host, port)

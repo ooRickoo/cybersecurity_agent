@@ -8,6 +8,7 @@ import os
 import sys
 from pathlib import Path
 from typing import Dict, List, Optional
+from datetime import datetime
 
 # Add project root to path
 sys.path.append(str(Path(__file__).parent.parent))
@@ -249,7 +250,7 @@ class EnvironmentMigration:
         report = []
         report.append("# Environment Variable Migration Report")
         report.append("")
-        report.append(f"Generated: {os.popen('date').read().strip()}")
+        report.append(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         report.append("")
         
         total_count = sum(len(vars) for vars in variables.values())

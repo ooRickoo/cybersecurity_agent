@@ -262,7 +262,7 @@ class OpenAPIConsumer:
             
         except Exception as e:
             logger.warning(f"Failed to generate operation ID for {method} {path}: {e}")
-            return f"{method}{hashlib.md5(path.encode()).hexdigest()[:8]}"
+            return f"{method}{hashlib.sha256(path.encode()).hexdigest()[:8]}"
     
     def _process_parameters(self, parameters: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Process operation parameters."""
@@ -370,11 +370,11 @@ class OpenAPIConsumer:
             
             # Create hash from title and version
             content = f"{title}{version}".encode()
-            return hashlib.md5(content).hexdigest()[:12]
+            return hashlib.sha256(content).hexdigest()[:12]
             
         except Exception as e:
             logger.warning(f"Failed to generate spec ID: {e}")
-            return hashlib.md5(str(spec).encode()).hexdigest()[:12]
+            return hashlib.sha256(str(spec).encode()).hexdigest()[:12]
     
     def _generate_api_client(self, spec: Dict[str, Any]) -> 'APIClient':
         """Generate API client from specification."""

@@ -94,7 +94,9 @@ def open_latest_visualizations():
     for viz_type, file_path in latest_files.items():
         print(f"   Opening {viz_type}: {file_path.name}")
         try:
-            os.system(f"open '{file_path}'")
+            # Use subprocess with list format to avoid shell injection
+            import subprocess
+            subprocess.run(["open", str(file_path)], check=True)
         except Exception as e:
             print(f"   ❌ Could not open {file_path}: {e}")
 

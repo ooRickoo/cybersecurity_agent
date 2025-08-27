@@ -175,7 +175,7 @@ class SmartDataManager:
     def _generate_context_hash(self, context: DataContext) -> str:
         """Generate hash for context caching."""
         context_str = f"{context.data_id}_{context.data_type}_{context.source}_{context.size_bytes}"
-        return hashlib.md5(context_str.encode()).hexdigest()
+        return hashlib.sha256(context_str.encode()).hexdigest()
     
     def get_llm_context(self, data_id: str, task_description: str, 
                        max_context_size: int = 1000) -> LLMContext:

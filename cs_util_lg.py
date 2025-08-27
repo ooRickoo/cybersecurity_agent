@@ -24,6 +24,13 @@ except ImportError:
 # Add project root to path for imports
 sys.path.append(str(Path(__file__).parent))
 
+# Import the main agent class
+try:
+    from langgraph_cybersecurity_agent import LangGraphCybersecurityAgent
+    LANGGRAPH_AGENT_AVAILABLE = True
+except ImportError:
+    LANGGRAPH_AGENT_AVAILABLE = False
+
 def check_dependencies():
     """Check if required dependencies are available."""
     missing_deps = []
@@ -202,7 +209,7 @@ Examples:
     
     # Initialize agent if available
     agent = None
-    if langgraph_available:
+    if langgraph_available and LANGGRAPH_AGENT_AVAILABLE:
         try:
             agent = LangGraphCybersecurityAgent()
             await agent.start()
@@ -211,6 +218,10 @@ Examples:
             print(f"⚠️  Warning: Agent initialization failed: {e}")
             print("🔄 Running in simplified mode...")
             agent = None
+    elif not LANGGRAPH_AGENT_AVAILABLE:
+        print("⚠️  Warning: LangGraph agent module not available")
+        print("🔄 Running in simplified mode...")
+        agent = None
     
     # Handle list-workflows command
     if args.list_workflows:

@@ -698,8 +698,13 @@ class PCAPAnalyzer:
             
             logger.info(f"Starting PCAP capture: {cmd}")
             
-            # Start capture in background
-            process = subprocess.Popen(cmd, shell=True)
+            # Start capture in background - use list format to avoid shell injection
+            cmd_parts = ["tcpdump", "-i", "any", "-w", output_path]
+            if target_hosts:
+                for host in target_hosts:
+                    cmd_parts.extend(["host", host])
+            
+            process = subprocess.Popen(cmd_parts)
             
             # Wait for user to stop or set timeout
             logger.info("PCAP capture started. Press Ctrl+C to stop or wait for timeout.")
