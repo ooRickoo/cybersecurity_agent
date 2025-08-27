@@ -14,6 +14,13 @@ import json
 from datetime import datetime
 import uuid
 
+# Import cyber ASCII art
+try:
+    from bin.cyber_ascii_art import CyberASCIIArt
+    ASCII_ART_AVAILABLE = True
+except ImportError:
+    ASCII_ART_AVAILABLE = False
+
 # Add project root to path for imports
 sys.path.append(str(Path(__file__).parent))
 
@@ -215,6 +222,11 @@ Examples:
         session_id = str(uuid.uuid4())
         session_name = f"{args.workflow_type}_workflow"
         
+        # Show cyber ASCII art at workflow startup
+        if ASCII_ART_AVAILABLE:
+            print("\n" + CyberASCIIArt.get_random_opening())
+            print()
+        
         print(f"🚀 Executing {args.workflow_type} workflow...")
         print(f"📋 Problem: {args.problem_description}")
         
@@ -230,6 +242,11 @@ Examples:
         print("-" * 60)
         print(f"\n📁 Session ID: {session_id}")
         print(f"💾 Response saved to: {output_path}")
+        
+        # Show cyber ASCII art at workflow completion
+        if ASCII_ART_AVAILABLE:
+            print("\n" + CyberASCIIArt.get_random_closing())
+            print()
         
         # Save session log
         log_data = {
@@ -274,6 +291,11 @@ Examples:
             # Default prompt if none provided
             if not args.prompt:
                 args.prompt = f"Please analyze this CSV file with {len(df)} rows and {len(df.columns)} columns. Provide insights and recommendations."
+            
+            # Show cyber ASCII art at CSV processing startup
+            if ASCII_ART_AVAILABLE:
+                print("\n" + CyberASCIIArt.get_random_opening())
+                print()
             
             # Process with agent or fallback
             print(f"📁 Processing CSV file: {args.csv_file}")
@@ -322,6 +344,11 @@ Recommendations:
             print(f"📝 Session logs: session-logs/")
             print(f"💾 Session outputs: session-outputs/{session_id}/")
             
+            # Show cyber ASCII art at CSV processing completion
+            if ASCII_ART_AVAILABLE:
+                print("\n" + CyberASCIIArt.get_random_closing())
+                print()
+            
             # Save session log
             log_data = {
                 "agent_interactions": [
@@ -354,7 +381,12 @@ Recommendations:
     
     # If no specific command, enter interactive mode
     else:
-        print("\n" + "="*60)
+        # Show cyber ASCII art at startup
+        if ASCII_ART_AVAILABLE:
+            print("\n" + CyberASCIIArt.get_random_opening())
+            print()
+        
+        print("="*60)
         print("🛡️  Cybersecurity Agent - LangGraph Cybersecurity Agent")
         print("="*60)
         
@@ -387,6 +419,10 @@ Recommendations:
                 user_input = input().strip()
                 
                 if user_input.lower() in ['quit', 'exit', 'bye']:
+                    # Show cyber ASCII art at closing
+                    if ASCII_ART_AVAILABLE:
+                        print("\n" + CyberASCIIArt.get_random_closing())
+                        print()
                     print("🛡️  Stay vigilant! Goodbye, Security Professional!")
                     break
                 
@@ -418,7 +454,11 @@ To enable full features:
                 print(f"\n🛡️  Cybersecurity Agent: {response}")
                 
             except KeyboardInterrupt:
-                print("\n\n🛡️  Stay vigilant! Goodbye, Security Professional!")
+                # Show cyber ASCII art at closing
+                if ASCII_ART_AVAILABLE:
+                    print("\n" + CyberASCIIArt.get_random_closing())
+                    print()
+                print("\n🛡️  Stay vigilant! Goodbye, Security Professional!")
                 break
             except EOFError:
                 print("\n❌ Error: EOF when reading a line")

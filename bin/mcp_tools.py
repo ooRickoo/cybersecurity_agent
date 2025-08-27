@@ -461,7 +461,7 @@ class EncryptionManager:
         except ImportError:
             # Fallback to simple hash if cryptography not available
             import hashlib
-            return hashlib.md5(password.encode()).digest()
+            return hashlib.sha256(password.encode()).digest()
     
     def _derive_key_from_hash(self, password_hash: str) -> bytes:
         """Derive encryption key from password hash using salt."""
