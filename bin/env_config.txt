@@ -1,0 +1,30 @@
+# Encryption Configuration
+ENCRYPTION_ENABLED=false
+ENCRYPTION_PASSWORD_HASH=
+# Salt will be automatically generated and managed by the system
+# ENCRYPTION_SALT=cybersecurity_agent_salt
+
+# MCP Configuration
+MCP_SERVER_PATH=/path/to/mcp/server
+MCP_SERVER_ARGS=""
+
+# LangGraph Configuration
+LANGGRAPH_LOG_LEVEL=INFO
+LANGGRAPH_CHECKPOINT_DIR=./checkpoints
+
+# Session Management
+SESSION_LOGS_DIR=./session-logs
+SESSION_OUTPUTS_DIR=./session-outputs
+
+# Knowledge Base
+KNOWLEDGE_BASE_DIR=./knowledge-objects
+MASTER_CATALOG_FILE=master_catalog.db
+
+# Framework Processing
+MAX_FRAMEWORK_SIZE=1000000
+SUPPORTED_FORMATS=json,csv,xml,ttl,stix
+
+# Memory Dimensions
+SHORT_TERM_THRESHOLD=1000
+RUNNING_TERM_THRESHOLD=10000
+LONG_TERM_THRESHOLD=100000

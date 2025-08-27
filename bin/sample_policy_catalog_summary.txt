@@ -1,0 +1,29 @@
+MITRE ATT&CK Framework Mapping Summary Report
+==================================================
+
+Total Items Processed: 15
+Successfully Mapped: 15
+Mapping Success Rate: 100.0%
+
+Tactic Distribution:
+--------------------
+Collection: 6 items
+Command and Control: 5 items
+Initial Access: 1 items
+Lateral Movement: 1 items
+Exfiltration: 1 items
+Execution: 1 items
+
+Top Techniques:
+--------------------
+Data from Local System (T1005): 6 items
+Application Layer Protocol (T1071): 5 items
+Valid Accounts (T1078): 1 items
+Remote Services (T1021): 1 items
+Exfiltration Over C2 Channel (T1041): 1 items
+Process Injection (T1055): 1 items
+
+Average Confidence Score: 0.87
+High Risk Items: 10
+Medium Risk Items: 4
+Low Risk Items: 1

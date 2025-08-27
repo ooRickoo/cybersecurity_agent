@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Cybersecurity Agent - Dynamic Workflow Interface</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            height: 100vh;
+        }
+
+        .sidebar {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+        }
+
+        .main-chat {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 500px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .message.user {
+            background: #e3f2fd;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.agent {
+            background: #f3e5f5;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-content {
+            line-height: 1.5;
+        }
+
+        .message-content pre {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        .chat-input {
+            padding: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input input:focus {
+            border-color: #667eea;
+        }
+
+        .chat-input button {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+
+        .chat-input button:hover {
+            transform: translateY(-2px);
+        }
+
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+
+        .sidebar-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 5px;
+        }
+
+        .tool-category {
+            margin-bottom: 15px;
+        }
+
+        .tool-category h4 {
+            color: #764ba2;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .tool-list {
+            list-style: none;
+        }
+
+        .tool-item {
+            background: #f8f9fa;
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-left: 3px solid #667eea;
+        }
+
+        .tool-item:hover {
+            background: #e3f2fd;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online {
+            background: #4caf50;
+        }
+
+        .status-offline {
+            background: #f44336;
+        }
+
+        .quick-actions {
+            margin-top: 20px;
+        }
+
+        .quick-action-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: transform 0.2s;
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .workflow-highlight {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .workflow-highlight h3 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .workflow-highlight p {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 15px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .typing-indicator.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .sidebar {
+                order: 2;
+            }
+            
+            .main-chat {
+                order: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <h3>🤖 Agent Status</h3>
+                <div id="agent-status">
+                    <p><span class="status-indicator status-online"></span>Loading...</p>
+                </div>
+            </div>
+
+            <div class="workflow-highlight">
+                <h3>🚀 Dynamic Workflow</h3>
+                <p>Access the intelligent problem-solving system</p>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>🔧 Tool Categories</h3>
+                <div id="tool-categories">
+                    <p>Loading tools...</p>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>⚡ Quick Actions</h3>
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="sendMessage('Show system status')">
+                        📊 System Status
+                    </button>
+                    <button class="quick-action-btn" onclick="sendMessage('Use dynamic workflow to analyze network security')">
+                        🔍 Network Analysis
+                    </button>
+                    <button class="quick-action-btn" onclick="sendMessage('Help me with a security incident')">
+                        🚨 Security Incident
+                    </button>
+                    <button class="quick-action-btn" onclick="sendMessage('What tools do you have for threat analysis?')">
+                        🛡️ Threat Analysis
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat -->
+        <div class="main-chat">
+            <div class="header">
+                <h1>Enhanced Cybersecurity Agent</h1>
+                <p>Dynamic Workflow System • 42+ Tools • Intelligent Problem Solving</p>
+            </div>
+
+            <div class="chat-messages" id="chat-messages">
+                <div class="message agent">
+                    <div class="message-content">
+                        🤖 **Welcome to the Enhanced Cybersecurity Agent!**
+                        
+                        🚀 **Dynamic Workflow System**: Ready for complex problem-solving
+                        🔧 **Available Tools**: 42+ cybersecurity tools
+                        📊 **Capabilities**: Network analysis, security assessment, data processing, ML/AI
+                        
+                        💡 **How to Use**:
+                        • **Simple Tasks**: "Ping localhost", "Show system status"
+                        • **Complex Problems**: "Help me analyze a security incident", "Create a threat assessment workflow"
+                        • **Tool Discovery**: "What tools do you have for network analysis?"
+                        
+                        🎯 **Try asking me to**: "Use the dynamic workflow to help me with [your problem]"
+                    </div>
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typing-indicator">
+                Agent is thinking...
+            </div>
+
+            <div class="chat-input">
+                <div class="input-group">
+                    <input type="text" id="message-input" placeholder="Ask me anything about cybersecurity..." onkeypress="handleKeyPress(event)">
+                    <button onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Socket.IO
+        const socket = io();
+        let sessionId = null;
+
+        // DOM elements
+        const chatMessages = document.getElementById('chat-messages');
+        const messageInput = document.getElementById('message-input');
+        const typingIndicator = document.getElementById('typing-indicator');
+        const agentStatus = document.getElementById('agent-status');
+        const toolCategories = document.getElementById('tool-categories');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAgentInfo();
+            loadToolCategories();
+            sessionId = generateSessionId();
+        });
+
+        // Socket events
+        socket.on('connect', function() {
+            console.log('Connected to server');
+        });
+
+        socket.on('disconnect', function() {
+            console.log('Disconnected from server');
+        });
+
+        // Load agent information
+        async function loadAgentInfo() {
+            try {
+                const response = await fetch('/api/agent-info');
+                const data = await response.json();
+                
+                agentStatus.innerHTML = `
+                    <p><span class="status-indicator status-online"></span>${data.name}</p>
+                    <p><strong>Tools:</strong> ${data.total_tools}</p>
+                    <p><strong>Workflow:</strong> ${data.dynamic_workflow}</p>
+                    <p><strong>Version:</strong> ${data.version}</p>
+                `;
+            } catch (error) {
+                console.error('Error loading agent info:', error);
+                agentStatus.innerHTML = '<p><span class="status-indicator status-offline"></span>Error loading agent info</p>';
+            }
+        }
+
+        // Load tool categories
+        async function loadToolCategories() {
+            try {
+                const response = await fetch('/api/tool-categories');
+                const categories = await response.json();
+                
+                let html = '';
+                for (const [category, tools] of Object.entries(categories)) {
+                    if (tools.length > 0) {
+                        html += `
+                            <div class="tool-category">
+                                <h4>${category} (${tools.length})</h4>
+                                <ul class="tool-list">
+                                    ${tools.slice(0, 5).map(tool => `
+                                        <li class="tool-item" onclick="sendMessage('Use ${tool.name}')" title="${tool.description}">
+                                            ${tool.name}
+                                        </li>
+                                    `).join('')}
+                                    ${tools.length > 5 ? `<li class="tool-item">... and ${tools.length - 5} more</li>` : ''}
+                                </ul>
+                            </div>
+                        `;
+                    }
+                }
+                
+                toolCategories.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading tool categories:', error);
+                toolCategories.innerHTML = '<p>Error loading tools</p>';
+            }
+        }
+
+        // Send message
+        async function sendMessage(message = null) {
+            const text = message || messageInput.value.trim();
+            if (!text) return;
+
+            // Add user message to chat
+            addMessage(text, 'user');
+            messageInput.value = '';
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: text,
+                        session_id: sessionId
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    addMessage(`❌ Error: ${data.error}`, 'agent');
+                } else {
+                    addMessage(data.agent_response.content, 'agent');
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                addMessage('❌ Error: Failed to send message', 'agent');
+            }
+
+            // Hide typing indicator
+            hideTypingIndicator();
+        }
+
+        // Add message to chat
+        function addMessage(content, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            // Convert markdown-like formatting
+            const formattedContent = content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/`(.*?)`/g, '<code>$1</code>')
+                .replace(/\n/g, '<br>');
+            
+            messageDiv.innerHTML = `<div class="message-content">${formattedContent}</div>`;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Handle Enter key
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Show/hide typing indicator
+        function showTypingIndicator() {
+            typingIndicator.classList.add('show');
+        }
+
+        function hideTypingIndicator() {
+            typingIndicator.classList.remove('show');
+        }
+
+        // Generate session ID
+        function generateSessionId() {
+            return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+    </script>
+</body>
+</html>

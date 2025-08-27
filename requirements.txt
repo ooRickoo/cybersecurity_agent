@@ -1,0 +1,84 @@
+# Core dependencies
+pandas>=1.5.0
+numpy>=1.21.0
+requests>=2.28.0
+python-dotenv>=0.19.0
+
+# Database drivers
+pyodbc>=4.0.35          # For MSSQL connections
+pymongo>=4.3.0           # For MongoDB connections
+psycopg2-binary>=2.9.0   # For PostgreSQL connections
+mysql-connector-python>=8.0.0  # For MySQL connections
+
+# Active Directory / LDAP
+ldap3>=2.9.0             # Modern LDAP library (recommended)
+python-ldap>=3.4.0       # Alternative LDAP library
+
+# Data processing and analysis
+sqlite3                   # Built-in Python module
+hashlib                   # Built-in Python module
+json                      # Built-in Python module
+csv                       # Built-in Python module
+
+# Optional: For enhanced functionality
+cryptography>=3.4.0      # For enhanced security features
+keyring>=23.0.0          # For system credential storage
+
+# LangGraph and AI/ML dependencies
+langgraph>=0.2.0         # For workflow orchestration
+langchain>=0.3.0         # For AI agent capabilities
+langchain-openai>=0.2.0  # For OpenAI integration
+langchain-community>=0.3.0  # For community tools
+
+# Enhancement System Dependencies
+scikit-learn>=1.3.0      # For ML-based optimization and analysis
+asyncio-mqtt>=0.16.0     # For async MQTT operations
+aiofiles>=23.2.0         # For async file operations
+aiosqlite>=0.19.0        # For async SQLite operations
+
+# Network and security tools
+scapy>=2.5.0             # For network packet analysis
+pyshark>=0.6.0           # For Wireshark integration
+paramiko>=3.4.0          # For SSH connections
+netmiko>=4.3.0            # For network device automation
+
+# Data visualization
+matplotlib>=3.7.0        # For plotting and charts
+seaborn>=0.12.0          # For statistical visualizations
+plotly>=5.17.0           # For interactive visualizations
+networkx>=3.1             # For graph analysis
+
+# Web and API tools
+flask>=2.3.0             # For web applications
+fastapi>=0.104.0         # For API development
+uvicorn>=0.24.0          # For ASGI server
+aiohttp>=3.9.0           # For async HTTP requests
+
+# File processing
+openpyxl>=3.1.0          # For Excel file processing
+xlrd>=2.0.1              # For legacy Excel files
+python-docx>=1.1.0       # For Word documents
+PyPDF2>=3.0.0            # For PDF processing
+
+# Cloud and infrastructure
+boto3>=1.34.0            # For AWS integration
+azure-mgmt-resource>=23.0.0  # For Azure integration
+google-cloud-resource-manager>=1.10.0  # For GCP integration
+
+# Monitoring and logging
+prometheus-client>=0.19.0  # For metrics collection
+structlog>=23.2.0         # For structured logging
+colorama>=0.4.6           # For colored terminal output
+
+# Development and testing
+pytest>=7.4.0            # For testing
+black>=23.11.0            # For code formatting
+flake8>=6.1.0             # For linting
+mypy>=1.7.0               # For type checking
+
+# Additional utilities
+click>=8.1.0              # For CLI applications
+rich>=13.7.0              # For rich terminal output
+tqdm>=4.66.0              # For progress bars
+pyyaml>=6.0.1             # For YAML processing
+toml>=0.10.2              # For TOML configuration files
