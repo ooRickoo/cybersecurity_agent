@@ -1,7 +1,7 @@
 {
   "model_name": "random_forest",
-  "training_examples": 54,
-  "timestamp": 1756779569.9075809,
+  "training_examples": 254,
+  "timestamp": 1756779948.0750332,
   "workflow_types": [
     "patent_analysis",
     "malware_analysis",
