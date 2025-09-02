@@ -4209,20 +4209,20 @@ class LangGraphCybersecurityAgent:
                         print(f"⚠️  Could not read workflow context: {e}")
                         print(f"   Using default output file: {output_file_path}")
             
-            # Check if we have an OpenAI API key for LLM insights
-            openai_api_key = os.getenv("OPENAI_API_KEY")
+            # Initialize LLM client for insights
             llm_client = None
-            
-            if openai_api_key:
-                try:
-                    from bin.openai_llm_client import OpenAILLMClient
-                    llm_client = OpenAILLMClient()
+            try:
+                from bin.openai_llm_client import OpenAILLMClient
+                llm_client = OpenAILLMClient()
+                if llm_client.is_available():
                     print("🤖 OpenAI LLM client initialized for patent analysis")
-                except Exception as e:
-                    print(f"⚠️  OpenAI client initialization failed: {e}")
-                    print("   Continuing without LLM insights...")
-            else:
-                print("⚠️  No OpenAI API key found. Patent analysis will continue without LLM insights.")
+                else:
+                    print("⚠️  OpenAI LLM client not available. Patent analysis will continue without LLM insights.")
+                    llm_client = None
+            except Exception as e:
+                print(f"⚠️  OpenAI client initialization failed: {e}")
+                print("   Continuing without LLM insights...")
+                llm_client = None
             
             # Execute the actual patent analysis workflow
             print(f"🔍 Processing patent analysis workflow...")

@@ -28,6 +28,7 @@ import time
 import hashlib
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Union, Tuple, Callable
+from .openai_llm_client import OpenAILLMClient, LLMConfig, ModelType, ResponseFormat
 from dataclasses import dataclass, asdict
 from enum import Enum
 import os
@@ -81,36 +82,13 @@ class MCPServer:
         self.session_logger = None  # Will be set when available
         
         # OpenAI configuration
-        self.openai_configured = self._configure_openai()
+        self.llm_client = OpenAILLMClient()
+        self.openai_configured = self.llm_client.is_available()
         
         # Register built-in tools
         self._register_builtin_tools()
     
-    def _configure_openai(self) -> bool:
-        """Configure OpenAI API access."""
-        try:
-            api_key = os.getenv("OPENAI_API_KEY")
-            if api_key:
-                # Test the API key with a simple call
-                try:
-                    client = openai.OpenAI(api_key=api_key)
-                    # Make a minimal test call
-                    response = client.chat.completions.create(
-                        model="gpt-3.5-turbo",
-                        messages=[{"role": "user", "content": "test"}],
-                        max_tokens=5
-                    )
-                    self.logger.info("OpenAI API configured successfully")
-                    return True
-                except Exception as e:
-                    self.logger.warning(f"OpenAI API key test failed: {e}")
-                    return False
-            else:
-                self.logger.info("OpenAI API key not found - AI tools will be disabled")
-                return False
-        except Exception as e:
-            self.logger.warning(f"OpenAI configuration failed: {e}")
-            return False
+
     
     def set_tool_manager(self, tool_manager):
         """Set the tool manager for dynamic tool discovery."""
@@ -2971,55 +2949,49 @@ Choose the SINGLE most appropriate category:"""
     
     def _call_openai_api(self, system_prompt: str, user_prompt: str, model: str = "gpt-4", 
                          max_tokens: int = 1000, temperature: float = 0.3) -> Dict[str, Any]:
-        """Make a call to the OpenAI API."""
-        try:
-            # Check if OpenAI API key is available
-            api_key = os.getenv("OPENAI_API_KEY")
-            if not api_key:
-                return {"success": False, "error": "OpenAI API key not found. Please set OPENAI_API_KEY environment variable."}
-            
-            # Configure OpenAI client
-            client = openai.OpenAI(api_key=api_key)
-            
-            # Make the API call
-            response = client.chat.completions.create(
-                model=model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ],
-                max_tokens=max_tokens,
-                temperature=temperature
-            )
-            
-            # Extract response content
-            content = response.choices[0].message.content
-            tokens_used = response.usage.total_tokens
-            
-            # Calculate approximate cost (rough estimates)
-            cost = self._calculate_openai_cost(model, tokens_used)
-            
-            return {
-                "success": True,
-                "content": content,
-                "tokens_used": tokens_used,
-                "cost": cost
-            }
-            
-        except Exception as e:
-            return {"success": False, "error": f"OpenAI API call failed: {str(e)}"}
-    
-    def _calculate_openai_cost(self, model: str, tokens: int) -> float:
-        """Calculate approximate cost for OpenAI API usage."""
-        # Rough cost estimates per 1K tokens (as of 2024)
-        cost_per_1k = {
-            "gpt-4": 0.03,      # $0.03 per 1K input tokens
-            "gpt-4-turbo": 0.01, # $0.01 per 1K input tokens
-            "gpt-3.5-turbo": 0.002, # $0.002 per 1K input tokens
+        """Make a call to the OpenAI API using the centralized LLM client."""
+        if not self.llm_client.is_available():
+            return {"success": False, "error": "OpenAI LLM client not available"}
+        
+        # Map model string to ModelType enum
+        model_mapping = {
+            "gpt-4": ModelType.GPT_4,
+            "gpt-4-turbo": ModelType.GPT_4_TURBO,
+            "gpt-3.5-turbo": ModelType.GPT_3_5_TURBO,
+            "gpt-3.5-turbo-16k": ModelType.GPT_3_5_TURBO_16K
         }
         
-        base_cost = cost_per_1k.get(model, 0.01)  # Default to $0.01
-        return round((tokens / 1000) * base_cost, 4)
+        model_type = model_mapping.get(model, ModelType.GPT_4)
+        
+        # Create LLM config
+        config = LLMConfig(
+            model=model_type,
+            max_tokens=max_tokens,
+            temperature=temperature
+        )
+        
+        # Make the API call using centralized client
+        response = self.llm_client.generate_text(
+            prompt=user_prompt,
+            system_prompt=system_prompt,
+            config=config
+        )
+        
+        # Convert response to expected format
+        if response.success:
+            return {
+                "success": True,
+                "content": response.content,
+                "tokens_used": response.tokens_used,
+                "cost": response.cost
+            }
+        else:
+            return {
+                "success": False,
+                "error": response.error
+            }
+    
+
     
     def _get_reasoning_system_prompt(self, reasoning_type: str) -> str:
         """Get system prompt for reasoning tasks."""

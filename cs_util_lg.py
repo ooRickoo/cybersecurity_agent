@@ -639,8 +639,48 @@ async def execute_advanced_workflow(workflow_type: str, problem: str, agent=None
     except Exception as e:
         return f"❌ Error executing workflow: {e}"
 
+def check_activation():
+    """Check if the agent is activated on this host."""
+    try:
+        from bin.activation_manager import ActivationManager
+        activation_manager = ActivationManager()
+        
+        # Check if activation file exists
+        if not activation_manager.activation_file.exists():
+            return False, "No activation file found"
+        
+        # Get activation status
+        status = activation_manager.get_activation_status()
+        if not status['activated']:
+            return False, "Agent not activated on this host"
+        
+        return True, "Activation verified"
+        
+    except ImportError:
+        # If activation manager is not available, allow access (for development)
+        return True, "Activation check bypassed (development mode)"
+    except Exception as e:
+        return False, f"Activation check failed: {str(e)}"
+
 async def main():
     """Main CLI function."""
+    # Check activation first
+    print("🔐 Checking activation...")
+    is_activated, activation_message = check_activation()
+    
+    if not is_activated:
+        print(f"❌ {activation_message}")
+        print("\n🛡️  Cybersecurity Agent requires activation")
+        print("   This tool is bound to your specific host for security")
+        print("   Please run the activation utility first:")
+        print("   python bin/activate_agent.py")
+        print("\n   Or use the activation manager directly:")
+        print("   python bin/activation_manager.py create")
+        return  # Exit gracefully instead of sys.exit
+    
+    print(f"✅ {activation_message}")
+    print()
+    
     parser = argparse.ArgumentParser(
         description="Cybersecurity Agent CLI - Simple Interface with Advanced Capabilities",
         formatter_class=argparse.RawDescriptionHelpFormatter,
