@@ -3,26 +3,28 @@
 # ============================================================================
 # Default: Full Features Enabled
 # To disable optional features, comment out the relevant sections
+# Updated: 2025-01-01 - Based on actual installed versions
 
 # ============================================================================
 # CORE DEPENDENCIES (REQUIRED)
 # ============================================================================
-pandas>=1.5.0                    # Data manipulation and analysis
-numpy>=1.21.0                    # Numerical computing
-requests>=2.28.0                 # HTTP library for API calls
-python-dotenv>=0.19.0            # Environment variable management
-click>=8.1.0                     # CLI framework
-rich>=13.7.0                     # Rich terminal output
+pandas==1.4.2                    # Data manipulation and analysis
+numpy==1.26.4                    # Numerical computing (compatible with pandas)
+requests==2.32.5                 # HTTP library for API calls
+python-dotenv==1.1.0             # Environment variable management
+click==8.1.8                     # CLI framework
+rich==14.1.0                     # Rich terminal output
 tqdm>=4.66.0                     # Progress bars
 pyyaml>=6.0.1                    # YAML processing
 toml>=0.10.2                     # TOML configuration files
 aiohttp>=3.9.0                   # Async HTTP requests
-aiofiles>=23.2.0                 # Async file operations
+aiofiles==24.1.0                 # Async file operations
+typing-extensions==4.15.0        # Type hints compatibility
 
 # ============================================================================
 # AI/ML & WORKFLOW ENGINE (REQUIRED)
 # ============================================================================
-openai>=1.0.0                    # OpenAI API client
+openai==1.85.0                   # OpenAI API client
 langchain>=0.3.0                 # AI agent capabilities
 langchain-core>=0.3.0            # LangChain core functionality
 langchain-anthropic>=0.3.0       # Anthropic integration
@@ -43,7 +45,7 @@ aiosqlite>=0.19.0                # Async SQLite operations
 # ============================================================================
 # SECURITY & ENCRYPTION (REQUIRED)
 # ============================================================================
-cryptography>=3.4.0              # Encryption and security features
+cryptography==45.0.7             # Encryption and security features
 keyring>=23.0.0                  # System credential storage
 # Note: hashlib is built-in Python module, no pip install needed
 paramiko>=3.4.0                  # SSH connections and SFTP
@@ -60,7 +62,7 @@ netmiko>=4.3.0                   # Network device automation
 # ============================================================================
 # NETWORK & SECURITY TOOLS (REQUIRED)
 # ============================================================================
-scapy>=2.5.0                     # Network packet analysis
+scapy==2.6.1                     # Network packet analysis
 # pyshark>=0.6.0                   # Wireshark integration (optional)
 # asyncio-mqtt>=0.16.0             # Async MQTT operations (optional)
 
@@ -85,8 +87,10 @@ vega-lite>=5.0.0                 # Declarative visualization
 # CLOUD & INFRASTRUCTURE (REQUIRED)
 # ============================================================================
 boto3>=1.34.0                    # AWS integration
-azure-mgmt-resource>=23.0.0      # Azure integration
+azure-identity==1.24.0           # Azure authentication
+azure-mgmt-resourcegraph==8.0.0  # Azure Resource Graph integration
 google-cloud-resource-manager>=1.10.0  # GCP integration
+google-cloud-asset==3.30.1       # GCP Asset API
 
 # ============================================================================
 # MONITORING & LOGGING (REQUIRED)
@@ -105,13 +109,13 @@ python-ldap>=3.4.0               # Alternative LDAP library
 # MACHINE LEARNING & NLP (REQUIRED)
 # ============================================================================
 scikit-learn>=1.3.0              # Machine learning algorithms
-spacy>=3.7.0                     # NLP processing engine
+spacy==3.7.2                     # NLP processing engine
 
 # ============================================================================
 # DEVELOPMENT & TESTING (OPTIONAL - Comment out for production)
 # ============================================================================
-pytest>=7.4.0                    # Testing framework
-black>=23.11.0                   # Code formatting
+pytest==7.1.1                    # Testing framework
+black==19.10b0                   # Code formatting
 flake8>=6.1.0                    # Linting
 mypy>=1.7.0                      # Type checking
 
@@ -161,7 +165,7 @@ kibana>=8.0.0                    # Kibana integration
 
 # Advanced SIEM Integration
 qradar>=1.0.0                    # IBM QRadar integration
-splunk-sdk>=1.7.0                # Splunk integration
+splunk-sdk==2.1.1                # Splunk integration
 exabeam>=1.0.0                   # Exabeam integration
 
 # ============================================================================
@@ -169,7 +173,7 @@ exabeam>=1.0.0                   # Exabeam integration
 # ============================================================================
 numba>=0.57.0                    # JIT compilation for performance
 cython>=3.0.0                    # C extensions for Python
-mypy-extensions>=1.0.0           # Type checking extensions
+mypy-extensions==0.4.3           # Type checking extensions
 
 # ============================================================================
 # NODE.JS DEPENDENCIES (for Session Viewer)

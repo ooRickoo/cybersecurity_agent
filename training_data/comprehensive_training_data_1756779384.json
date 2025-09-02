@@ -1,0 +1,795 @@
+{
+  "examples": [
+    {
+      "user_input": "Vulnerability assessment example.com (focus on service)",
+      "input_files": [],
+      "correct_workflow": "vulnerability_scan",
+      "complexity": "moderate",
+      "confidence_score": 0.9810628270962578,
+      "timestamp": 1756779384.436244,
+      "metadata": {
+        "domain": "vulnerability_assessment",
+        "source": "security_testing",
+        "generated": true,
+        "scenario_id": 8406
+      }
+    },
+    {
+      "user_input": "Standards assessment database",
+      "input_files": [],
+      "correct_workflow": "compliance_assessment",
+      "complexity": "moderate",
+      "confidence_score": 0.8109617171016485,
+      "timestamp": 1756779384.436359,
+      "metadata": {
+        "domain": "compliance",
+        "source": "regulatory_assessment",
+        "generated": true,
+        "scenario_id": 9211
+      }
+    },
+    {
+      "user_input": "Network investigation network.pcapng",
+      "input_files": [
+        "network.pcapng"
+      ],
+      "correct_workflow": "network_analysis",
+      "complexity": "moderate",
+      "confidence_score": 0.9993754485733815,
+      "timestamp": 1756779384.436233,
+      "metadata": {
+        "domain": "network_analysis",
+        "source": "network_forensics",
+        "generated": true,
+        "scenario_id": 5940
+      }
+    },
+    {
+      "user_input": "fast I need patent information for EP98765432, US12345678, patent_list.csv",
+      "input_files": [],
+      "correct_workflow": "patent_analysis",
+      "complexity": "simple",
+      "confidence_score": 0.8729631880462555,
+      "timestamp": 1756779384.436157,
+      "metadata": {
+        "domain": "intellectual_property",
+        "source": "patent_analysis",
+        "generated": true,
+        "scenario_id": 8982
+      }
+    },
+    {
+      "user_input": "fast Can you analyze these patents: patent_list.csv, EP98765432, US12345678?",
+      "input_files": [],
+      "correct_workflow": "patent_analysis",
+      "complexity": "simple",
+      "confidence_score": 0.9120648330269633,
+      "timestamp": 1756779384.436173,
+      "metadata": {
+        "domain": "intellectual_property",
+        "source": "patent_analysis",
+        "generated": true,
+        "scenario_id": 8982
+      }
+    },
+    {
+      "user_input": "Security testing 10.0.0.1",
+      "input_files": [],
+      "correct_workflow": "vulnerability_scan",
+      "complexity": "moderate",
+      "confidence_score": 0.9041424382416704,
+      "timestamp": 1756779384.436259,
+      "metadata": {
+        "domain": "vulnerability_assessment",
+        "source": "security_testing",
+        "generated": true,
+        "scenario_id": 8406
+      }
+    },
+    {
+      "user_input": "Audit database for compliance",
+      "input_files": [],
+      "correct_workflow": "compliance_assessment",
+      "complexity": "moderate",
+      "confidence_score": 0.8482981515204309,
+      "timestamp": 1756779384.436372,
+      "metadata": {
+        "domain": "compliance",
+        "source": "regulatory_assessment",
+        "generated": true,
+        "scenario_id": 9211
+      }
+    },
+    {
+      "user_input": "Look at this data",
+      "input_files": [],
+      "correct_workflow": "general_analysis",
+      "complexity": "moderate",
+      "confidence_score": 0.6697254419425749,
+      "timestamp": 1756779384.4364119,
+      "metadata": {
+        "source": "edge_case",
+        "type": "ambiguous"
+      }
+    },
+    {
+      "user_input": "thorough Check if malware.exe is malicious (focus on signature)",
+      "input_files": [
+        "malware.exe"
+      ],
+      "correct_workflow": "malware_analysis",
+      "complexity": "moderate",
+      "confidence_score": 0.9919593676716255,
+      "timestamp": 1756779384.436194,
+      "metadata": {
+        "domain": "malware_analysis",
+        "source": "security_analysis",
+        "generated": true,
+        "scenario_id": 8478
+      }
+    },
+    {
+      "user_input": "Threat actor profiling user_data",
+      "input_files": [],
+      "correct_workflow": "threat_intelligence",
+      "complexity": "moderate",
+      "confidence_score": 0.8106894561440803,
+      "timestamp": 1756779384.4363909,
+      "metadata": {
+        "domain": "threat_intelligence",
+        "source": "intelligence_analysis",
+        "generated": true,
+        "scenario_id": 5064
+      }
+    },
+    {
+      "user_input": "Data insights from analysis.xlsx",
+      "input_files": [
+        "analysis.xlsx"
+      ],
+      "correct_workflow": "data_analysis",
+      "complexity": "simple",
+      "confidence_score": 0.8101867196653175,
+      "timestamp": 1756779384.436316,
+      "metadata": {
+        "domain": "data_analysis",
+        "source": "data_processing",
+        "generated": true,
+        "scenario_id": 300
+      }
+    },
+    {
+      "user_input": "Intelligence gathering system_logs",
+      "input_files": [],
+      "correct_workflow": "threat_intelligence",
+      "complexity": "moderate",
+      "confidence_score": 0.9330377482529165,
+      "timestamp": 1756779384.436395,
+      "metadata": {
+        "domain": "threat_intelligence",
+        "source": "intelligence_analysis",
+        "generated": true,
+        "scenario_id": 5064
+      }
+    },
+    {
+      "user_input": "comprehensive Threat detection for malware.exe",
+      "input_files": [
+        "malware.exe"
+      ],
+      "correct_workflow": "malware_analysis",
+      "complexity": "complex",
+      "confidence_score": 0.8859220430890566,
+      "timestamp": 1756779384.436199,
+      "metadata": {
+        "domain": "malware_analysis",
+        "source": "security_analysis",
+        "generated": true,
+        "scenario_id": 8478
+      }
+    },
+    {
+      "user_input": "Compliance assessment of this security data",
+      "input_files": [],
+      "correct_workflow": "malware_analysis",
+      "complexity": "complex",
+      "confidence_score": 0.7838594603927038,
+      "timestamp": 1756779384.436417,
+      "metadata": {
+        "source": "edge_case",
+        "type": "multi_domain"
+      }
+    },
+    {
+      "user_input": "Malware analysis with network forensics",
+      "input_files": [],
+      "correct_workflow": "incident_response",
+      "complexity": "complex",
+      "confidence_score": 0.8221454201027175,
+      "timestamp": 1756779384.436415,
+      "metadata": {
+        "source": "edge_case",
+        "type": "multi_domain"
+      }
+    },
+    {
+      "user_input": "Investigate security breach breach_2024 (focus on timeline)",
+      "input_files": [],
+      "correct_workflow": "incident_response",
+      "complexity": "complex",
+      "confidence_score": 0.8478973424812474,
+      "timestamp": 1756779384.4362822,
+      "metadata": {
+        "domain": "incident_response",
+        "source": "security_incident",
+        "generated": true,
+        "scenario_id": 1138
+      }
+    },
+    {
+      "user_input": "standard Analyze network traffic in traffic.pcap (focus on firewall)",
+      "input_files": [
+        "traffic.pcap"
+      ],
+      "correct_workflow": "network_analysis",
+      "complexity": "moderate",
+      "confidence_score": 0.856162300489266,
+      "timestamp": 1756779384.4362218,
+      "metadata": {
+        "domain": "network_analysis",
+        "source": "network_forensics",
+        "generated": true,
+        "scenario_id": 5940
+      }
+    },
+    {
+      "user_input": "Threat intelligence system_logs",
+      "input_files": [],
+      "correct_workflow": "threat_hunting",
+      "complexity": "complex",
+      "confidence_score": 0.821187168271056,
+      "timestamp": 1756779384.436287,
+      "metadata": {
+        "domain": "threat_hunting",
+        "source": "proactive_security",
+        "generated": true,
+        "scenario_id": 7072
+      }
+    },
+    {
+      "user_input": "Intelligence gathering network_logs",
+      "input_files": [],
+      "correct_workflow": "threat_intelligence",
+      "complexity": "moderate",
+      "confidence_score": 0.876877603293673,
+      "timestamp": 1756779384.4364002,
+      "metadata": {
+        "domain": "threat_intelligence",
+        "source": "intelligence_analysis",
+        "generated": true,
+        "scenario_id": 5064
+      }
+    },
+    {
+      "user_input": "Timeline analysis sample.txt",
+      "input_files": [
+        "sample.txt"
+      ],
+      "correct_workflow": "file_forensics",
+      "complexity": "complex",
+      "confidence_score": 0.8032559153010145,
+      "timestamp": 1756779384.4363542,
+      "metadata": {
+        "domain": "digital_forensics",
+        "source": "forensic_analysis",
+        "generated": true,
+        "scenario_id": 7141
+      }
+    },
+    {
+      "user_input": "Response to security incident attack_logs",
+      "input_files": [],
+      "correct_workflow": "incident_response",
+      "complexity": "complex",
+      "confidence_score": 0.8674344543578222,
+      "timestamp": 1756779384.436268,
+      "metadata": {
+        "domain": "incident_response",
+        "source": "security_incident",
+        "generated": true,
+        "scenario_id": 1138
+      }
+    },
+    {
+      "user_input": "thorough Security testing 10.0.0.1",
+      "input_files": [],
+      "correct_workflow": "vulnerability_scan",
+      "complexity": "moderate",
+      "confidence_score": 0.8013782194848863,
+      "timestamp": 1756779384.4362502,
+      "metadata": {
+        "domain": "vulnerability_assessment",
+        "source": "security_testing",
+        "generated": true,
+        "scenario_id": 8406
+      }
+    },
+    {
+      "user_input": "complex File carving sample.txt",
+      "input_files": [
+        "sample.txt"
+      ],
+      "correct_workflow": "file_forensics",
+      "complexity": "complex",
+      "confidence_score": 0.8238041894145909,
+      "timestamp": 1756779384.4363399,
+      "metadata": {
+        "domain": "digital_forensics",
+        "source": "forensic_analysis",
+        "generated": true,
+        "scenario_id": 7141
+      }
+    },
+    {
+      "user_input": "deep File system analysis sample.txt",
+      "input_files": [
+        "sample.txt"
+      ],
+      "correct_workflow": "file_forensics",
+      "complexity": "complex",
+      "confidence_score": 0.8478919385361223,
+      "timestamp": 1756779384.4363499,
+      "metadata": {
+        "domain": "digital_forensics",
+        "source": "forensic_analysis",
+        "generated": true,
+        "scenario_id": 7141
+      }
+    },
+    {
+      "user_input": "fast Statistical insights metrics.csv",
+      "input_files": [
+        "metrics.csv"
+      ],
+      "correct_workflow": "data_analysis",
+      "complexity": "simple",
+      "confidence_score": 0.978092536920556,
+      "timestamp": 1756779384.436311,
+      "metadata": {
+        "domain": "data_analysis",
+        "source": "data_processing",
+        "generated": true,
+        "scenario_id": 300
+      }
+    },
+    {
+      "user_input": "Security audit example.com (focus on severity)",
+      "input_files": [],
+      "correct_workflow": "vulnerability_scan",
+      "complexity": "moderate",
+      "confidence_score": 0.9968883777294302,
+      "timestamp": 1756779384.436255,
+      "metadata": {
+        "domain": "vulnerability_assessment",
+        "source": "security_testing",
+        "generated": true,
+        "scenario_id": 8406
+      }
+    },
+    {
+      "user_input": "Analyze these patent numbers: EP98765432, patent_list.csv, US12345678",
+      "input_files": [],
+      "correct_workflow": "patent_analysis",
+      "complexity": "simple",
+      "confidence_score": 0.859230443903501,
+      "timestamp": 1756779384.436148,
+      "metadata": {
+        "domain": "intellectual_property",
+        "source": "patent_analysis",
+        "generated": true,
+        "scenario_id": 8982
+      }
+    },
+    {
+      "user_input": "detailed Compliance review application",
+      "input_files": [],
+      "correct_workflow": "compliance_assessment",
+      "complexity": "moderate",
+      "confidence_score": 0.8985458218170891,
+      "timestamp": 1756779384.436377,
+      "metadata": {
+        "domain": "compliance",
+        "source": "regulatory_assessment",
+        "generated": true,
+        "scenario_id": 9211
+      }
+    },
+    {
+      "user_input": "Data exploration stats.txt",
+      "input_files": [
+        "stats.txt"
+      ],
+      "correct_workflow": "data_analysis",
+      "complexity": "simple",
+      "confidence_score": 0.9405792153615582,
+      "timestamp": 1756779384.4363258,
+      "metadata": {
+        "domain": "data_analysis",
+        "source": "data_processing",
+        "generated": true,
+        "scenario_id": 300
+      }
+    },
+    {
+      "user_input": "straightforward Data exploration stats.txt",
+      "input_files": [
+        "stats.txt"
+      ],
+      "correct_workflow": "data_analysis",
+      "complexity": "simple",
+      "confidence_score": 0.8924418411912558,
+      "timestamp": 1756779384.436321,
+      "metadata": {
+        "domain": "data_analysis",
+        "source": "data_processing",
+        "generated": true,
+        "scenario_id": 300
+      }
+    },
+    {
+      "user_input": "Timeline analysis sample.txt",
+      "input_files": [
+        "sample.txt"
+      ],
+      "correct_workflow": "file_forensics",
+      "complexity": "complex",
+      "confidence_score": 0.9451554361745826,
+      "timestamp": 1756779384.436345,
+      "metadata": {
+        "domain": "digital_forensics",
+        "source": "forensic_analysis",
+        "generated": true,
+        "scenario_id": 7141
+      }
+    },
+    {
+      "user_input": "Incident timeline incident_001",
+      "input_files": [],
+      "correct_workflow": "incident_response",
+      "complexity": "complex",
+      "confidence_score": 0.8794253332896627,
+      "timestamp": 1756779384.436264,
+      "metadata": {
+        "domain": "incident_response",
+        "source": "security_incident",
+        "generated": true,
+        "scenario_id": 1138
+      }
+    },
+    {
+      "user_input": "Virus check for ransomware.bin",
+      "input_files": [
+        "ransomware.bin"
+      ],
+      "correct_workflow": "malware_analysis",
+      "complexity": "moderate",
+      "confidence_score": 0.8378123219829452,
+      "timestamp": 1756779384.436204,
+      "metadata": {
+        "domain": "malware_analysis",
+        "source": "security_analysis",
+        "generated": true,
+        "scenario_id": 8478
+      }
+    },
+    {
+      "user_input": "detailed Can you scan 10.0.0.1 for security issues?",
+      "input_files": [],
+      "correct_workflow": "vulnerability_scan",
+      "complexity": "moderate",
+      "confidence_score": 0.8454370974098439,
+      "timestamp": 1756779384.436239,
+      "metadata": {
+        "domain": "vulnerability_assessment",
+        "source": "security_testing",
+        "generated": true,
+        "scenario_id": 8406
+      }
+    },
+    {
+      "user_input": "Traffic analysis workflow network.pcapng (focus on https)",
+      "input_files": [
+        "network.pcapng"
+      ],
+      "correct_workflow": "network_analysis",
+      "complexity": "moderate",
+      "confidence_score": 0.9081705940907105,
+      "timestamp": 1756779384.43621,
+      "metadata": {
+        "domain": "network_analysis",
+        "source": "network_forensics",
+        "generated": true,
+        "scenario_id": 5940
+      }
+    },
+    {
+      "user_input": "Standards assessment network",
+      "input_files": [],
+      "correct_workflow": "compliance_assessment",
+      "complexity": "moderate",
+      "confidence_score": 0.8825362792983383,
+      "timestamp": 1756779384.436368,
+      "metadata": {
+        "domain": "compliance",
+        "source": "regulatory_assessment",
+        "generated": true,
+        "scenario_id": 9211
+      }
+    },
+    {
+      "user_input": "Threat analysis network_logs",
+      "input_files": [],
+      "correct_workflow": "threat_intelligence",
+      "complexity": "moderate",
+      "confidence_score": 0.8879126585247943,
+      "timestamp": 1756779384.4363809,
+      "metadata": {
+        "domain": "threat_intelligence",
+        "source": "intelligence_analysis",
+        "generated": true,
+        "scenario_id": 5064
+      }
+    },
+    {
+      "user_input": "Virus check for malware.exe",
+      "input_files": [
+        "malware.exe"
+      ],
+      "correct_workflow": "malware_analysis",
+      "complexity": "moderate",
+      "confidence_score": 0.9248596345928496,
+      "timestamp": 1756779384.4361868,
+      "metadata": {
+        "domain": "malware_analysis",
+        "source": "security_analysis",
+        "generated": true,
+        "scenario_id": 8478
+      }
+    },
+    {
+      "user_input": "Response to security incident breach_2024",
+      "input_files": [],
+      "correct_workflow": "incident_response",
+      "complexity": "complex",
+      "confidence_score": 0.9509277898504394,
+      "timestamp": 1756779384.4362729,
+      "metadata": {
+        "domain": "incident_response",
+        "source": "security_incident",
+        "generated": true,
+        "scenario_id": 1138
+      }
+    },
+    {
+      "user_input": "detailed PCAP analysis of network.pcapng",
+      "input_files": [
+        "network.pcapng"
+      ],
+      "correct_workflow": "network_analysis",
+      "complexity": "moderate",
+      "confidence_score": 0.9300717274766579,
+      "timestamp": 1756779384.436216,
+      "metadata": {
+        "domain": "network_analysis",
+        "source": "network_forensics",
+        "generated": true,
+        "scenario_id": 5940
+      }
+    },
+    {
+      "user_input": "IOC enrichment system_logs (focus on threat_actor)",
+      "input_files": [],
+      "correct_workflow": "threat_intelligence",
+      "complexity": "moderate",
+      "confidence_score": 0.9376390245318013,
+      "timestamp": 1756779384.436387,
+      "metadata": {
+        "domain": "threat_intelligence",
+        "source": "intelligence_analysis",
+        "generated": true,
+        "scenario_id": 5064
+      }
+    },
+    {
+      "user_input": "Look at this data",
+      "input_files": [],
+      "correct_workflow": "interactive",
+      "complexity": "moderate",
+      "confidence_score": 0.38042534563293784,
+      "timestamp": 1756779384.436408,
+      "metadata": {
+        "source": "edge_case",
+        "type": "ambiguous"
+      }
+    },
+    {
+      "user_input": "Compliance check network",
+      "input_files": [],
+      "correct_workflow": "compliance_assessment",
+      "complexity": "moderate",
+      "confidence_score": 0.9484298266243297,
+      "timestamp": 1756779384.436363,
+      "metadata": {
+        "domain": "compliance",
+        "source": "regulatory_assessment",
+        "generated": true,
+        "scenario_id": 9211
+      }
+    },
+    {
+      "user_input": "complete Network investigation capture.pcap (focus on tcp)",
+      "input_files": [
+        "capture.pcap"
+      ],
+      "correct_workflow": "network_analysis",
+      "complexity": "moderate",
+      "confidence_score": 0.8743490711718457,
+      "timestamp": 1756779384.436228,
+      "metadata": {
+        "domain": "network_analysis",
+        "source": "network_forensics",
+        "generated": true,
+        "scenario_id": 5940
+      }
+    },
+    {
+      "user_input": "Patent analysis workflow for patent_list.csv",
+      "input_files": [],
+      "correct_workflow": "patent_analysis",
+      "complexity": "simple",
+      "confidence_score": 0.8890052368360786,
+      "timestamp": 1756779384.4361641,
+      "metadata": {
+        "domain": "intellectual_property",
+        "source": "patent_analysis",
+        "generated": true,
+        "scenario_id": 8982
+      }
+    },
+    {
+      "user_input": "Incident response for breach_2024",
+      "input_files": [],
+      "correct_workflow": "incident_response",
+      "complexity": "complex",
+      "confidence_score": 0.8700738162325756,
+      "timestamp": 1756779384.436277,
+      "metadata": {
+        "domain": "incident_response",
+        "source": "security_incident",
+        "generated": true,
+        "scenario_id": 1138
+      }
+    },
+    {
+      "user_input": "Look up patent information for EP98765432",
+      "input_files": [],
+      "correct_workflow": "patent_analysis",
+      "complexity": "simple",
+      "confidence_score": 0.927403569662373,
+      "timestamp": 1756779384.4361322,
+      "metadata": {
+        "domain": "intellectual_property",
+        "source": "patent_analysis",
+        "generated": true,
+        "scenario_id": 8982
+      }
+    },
+    {
+      "user_input": "Data processing analysis.xlsx",
+      "input_files": [
+        "analysis.xlsx"
+      ],
+      "correct_workflow": "data_analysis",
+      "complexity": "simple",
+      "confidence_score": 0.8689716125295328,
+      "timestamp": 1756779384.436331,
+      "metadata": {
+        "domain": "data_analysis",
+        "source": "data_processing",
+        "generated": true,
+        "scenario_id": 300
+      }
+    },
+    {
+      "user_input": "complete Scan for malware in suspicious.pdf",
+      "input_files": [
+        "suspicious.pdf"
+      ],
+      "correct_workflow": "malware_analysis",
+      "complexity": "moderate",
+      "confidence_score": 0.8582433747459028,
+      "timestamp": 1756779384.436182,
+      "metadata": {
+        "domain": "malware_analysis",
+        "source": "security_analysis",
+        "generated": true,
+        "scenario_id": 8478
+      }
+    },
+    {
+      "user_input": "Threat hunting workflow network_logs",
+      "input_files": [],
+      "correct_workflow": "threat_hunting",
+      "complexity": "complex",
+      "confidence_score": 0.9569754228511587,
+      "timestamp": 1756779384.436301,
+      "metadata": {
+        "domain": "threat_hunting",
+        "source": "proactive_security",
+        "generated": true,
+        "scenario_id": 7072
+      }
+    },
+    {
+      "user_input": "Threat intelligence user_data",
+      "input_files": [],
+      "correct_workflow": "threat_hunting",
+      "complexity": "complex",
+      "confidence_score": 0.8700694898712068,
+      "timestamp": 1756779384.436296,
+      "metadata": {
+        "domain": "threat_hunting",
+        "source": "proactive_security",
+        "generated": true,
+        "scenario_id": 7072
+      }
+    },
+    {
+      "user_input": "Threat intelligence network_logs (focus on ioc)",
+      "input_files": [],
+      "correct_workflow": "threat_hunting",
+      "complexity": "complex",
+      "confidence_score": 0.9778285423085894,
+      "timestamp": 1756779384.4362922,
+      "metadata": {
+        "domain": "threat_hunting",
+        "source": "proactive_security",
+        "generated": true,
+        "scenario_id": 7072
+      }
+    },
+    {
+      "user_input": "Timeline analysis sample.txt",
+      "input_files": [
+        "sample.txt"
+      ],
+      "correct_workflow": "file_forensics",
+      "complexity": "complex",
+      "confidence_score": 0.8812514044963334,
+      "timestamp": 1756779384.436336,
+      "metadata": {
+        "domain": "digital_forensics",
+        "source": "forensic_analysis",
+        "generated": true,
+        "scenario_id": 7141
+      }
+    },
+    {
+      "user_input": "complex Threat detection network_logs",
+      "input_files": [],
+      "correct_workflow": "threat_hunting",
+      "complexity": "complex",
+      "confidence_score": 0.8068223525132817,
+      "timestamp": 1756779384.4363048,
+      "metadata": {
+        "domain": "threat_hunting",
+        "source": "proactive_security",
+        "generated": true,
+        "scenario_id": 7072
+      }
+    }
+  ],
+  "created_at": 1756779384.43644,
+  "version": "1.0",
+  "description": "Comprehensive training dataset with 54 examples"
+}
