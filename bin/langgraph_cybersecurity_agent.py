@@ -53,7 +53,7 @@ from bin.context_memory_manager import ContextMemoryManager
 from bin.memory_mcp_tools import MemoryMCPTools
 
 # Workflow verification imports
-# from bin.workflow_verification_mcp_tools import get_workflow_verification_mcp_tools  # Temporarily disabled
+from bin.workflow_verification_mcp_tools import get_workflow_verification_mcp_tools
 
 # ============================================================================
 # ENVIRONMENT CONFIGURATION
@@ -1344,7 +1344,6 @@ class LangGraphCybersecurityAgent:
                 self.memory_tools = None
             
             try:
-                # from bin.workflow_verification_mcp_tools import get_workflow_verification_mcp_tools  # Temporarily disabled
                 self.verification_tools = get_workflow_verification_mcp_tools()
                 mcp_tools_available.append("Workflow Verification")
                 print("✅ Workflow verification MCP tools initialized")
