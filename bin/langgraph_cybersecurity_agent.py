@@ -53,7 +53,7 @@ from bin.context_memory_manager import ContextMemoryManager
 from bin.memory_mcp_tools import MemoryMCPTools
 
 # Workflow verification imports
-from bin.workflow_verification_mcp_tools import get_workflow_verification_mcp_tools
+# from bin.workflow_verification_mcp_tools import get_workflow_verification_mcp_tools  # Temporarily disabled
 
 # ============================================================================
 # ENVIRONMENT CONFIGURATION
@@ -1255,7 +1255,8 @@ class LangGraphCybersecurityAgent:
         # Initialize enhanced workflow template manager
         from bin.enhanced_workflow_template_manager import EnhancedWorkflowTemplateManager
         self.workflow_manager = EnhancedWorkflowTemplateManager()
-        self.session_manager = SessionManager()
+        # self.session_manager = SessionManager()  # Temporarily disabled
+        self.session_manager = None
         
         # Initialize smart cache for LLM call optimization
         self.smart_cache = SmartCache()
@@ -1343,11 +1344,11 @@ class LangGraphCybersecurityAgent:
                 self.memory_tools = None
             
             try:
-                from bin.workflow_verification_mcp_tools import get_workflow_verification_mcp_tools
+                # from bin.workflow_verification_mcp_tools import get_workflow_verification_mcp_tools  # Temporarily disabled
                 self.verification_tools = get_workflow_verification_mcp_tools()
                 mcp_tools_available.append("Workflow Verification")
                 print("✅ Workflow verification MCP tools initialized")
-            except ImportError as e:
+            except (ImportError, NameError) as e:
                 print(f"⚠️  Workflow verification MCP tools not available: {e}")
                 self.verification_tools = None
             
