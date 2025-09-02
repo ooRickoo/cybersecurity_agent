@@ -702,6 +702,7 @@ python session-viewer/start-viewer.py
 - **[AI Tools Documentation](documentation/AI_TOOLS_GUIDE.md)** - AI-powered analysis and insights
 - **[Knowledge Graph Memory](documentation/KNOWLEDGE_GRAPH_CONTEXT_MEMORY.md)** - Memory system and context management
 - **[Data Processing Guide](documentation/DATA_PROCESSING_GUIDE.md)** - Data analysis and manipulation
+- **[Workflow Detection Training](documentation/WORKFLOW_DETECTION_TRAINING_GUIDE.md)** - ML model training and intelligent workflow detection
 
 ### **System Architecture**
 - **[Architecture Overview](documentation/ARCHITECTURE_OVERVIEW.md)** - System design and components

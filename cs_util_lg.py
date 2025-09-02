@@ -225,7 +225,7 @@ async def execute_advanced_workflow(workflow_type: str, problem: str, agent=None
         }
         
         # For file-based workflows, actually execute the workflow
-        if input_file_info and input_file_info['type'] in ['csv', 'json', 'yaml', 'xml']:
+        if input_file_info and input_file_info['type'] in ['csv', 'json', 'yaml', 'xml', 'pcap', 'log']:
             if workflow_type == 'data_conversion':
                 # Execute the actual data conversion workflow
                 print(f"🚀 Executing {workflow_type} workflow for: {problem}")

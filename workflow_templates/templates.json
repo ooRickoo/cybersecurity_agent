@@ -94,8 +94,8 @@
       "llm"
     ],
     "version": "1.0",
-    "created_at": 1756779825.943711,
-    "last_modified": 1756779825.943711,
+    "created_at": 1756781554.683895,
+    "last_modified": 1756781554.683895,
     "usage_count": 0,
     "success_rate": 0.0,
     "avg_execution_time": 0.0,
@@ -215,8 +215,8 @@
       "forensics"
     ],
     "version": "1.0",
-    "created_at": 1756779825.9437199,
-    "last_modified": 1756779825.9437199,
+    "created_at": 1756781554.683902,
+    "last_modified": 1756781554.683902,
     "usage_count": 0,
     "success_rate": 0.0,
     "avg_execution_time": 0.0,
@@ -337,8 +337,8 @@
       "security"
     ],
     "version": "1.0",
-    "created_at": 1756779825.943729,
-    "last_modified": 1756779825.9437299,
+    "created_at": 1756781554.6839092,
+    "last_modified": 1756781554.6839092,
     "usage_count": 0,
     "success_rate": 0.0,
     "avg_execution_time": 0.0,
@@ -861,6 +861,249 @@
     "version": "1.0",
     "created_at": 1756777735.31267,
     "last_modified": 1756777735.31267,
+    "usage_count": 0,
+    "success_rate": 0.0,
+    "avg_execution_time": 0.0,
+    "adaptation_rules": [],
+    "optimization_hints": {}
+  },
+  "vulnerability_assessment_v1": {
+    "template_id": "vulnerability_assessment_v1",
+    "name": "Vulnerability Assessment Workflow",
+    "description": "Comprehensive vulnerability scanning and assessment",
+    "category": "investigation",
+    "complexity": "moderate",
+    "steps": [
+      {
+        "step_id": "target_discovery",
+        "name": "Target Discovery",
+        "description": "Discover and enumerate target systems",
+        "tool_name": "host_scanner",
+        "tool_category": "network",
+        "parameters": {},
+        "dependencies": [],
+        "estimated_duration": 10.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "port_scanning",
+        "name": "Port Scanning",
+        "description": "Scan for open ports and services",
+        "tool_name": "port_scanner",
+        "tool_category": "network",
+        "parameters": {},
+        "dependencies": [
+          "target_discovery"
+        ],
+        "estimated_duration": 15.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "vulnerability_scan",
+        "name": "Vulnerability Scan",
+        "description": "Scan for known vulnerabilities",
+        "tool_name": "vulnerability_scanner",
+        "tool_category": "security",
+        "parameters": {},
+        "dependencies": [
+          "port_scanning"
+        ],
+        "estimated_duration": 25.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "risk_assessment",
+        "name": "Risk Assessment",
+        "description": "Assess risk levels and prioritize findings",
+        "tool_name": "risk_assessor",
+        "tool_category": "security",
+        "parameters": {},
+        "dependencies": [
+          "vulnerability_scan"
+        ],
+        "estimated_duration": 10.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "generate_report",
+        "name": "Generate Report",
+        "description": "Generate vulnerability assessment report",
+        "tool_name": "report_generator",
+        "tool_category": "reporting",
+        "parameters": {},
+        "dependencies": [
+          "risk_assessment"
+        ],
+        "estimated_duration": 10.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      }
+    ],
+    "execution_mode": "sequential",
+    "required_tools": [
+      "host_scanner",
+      "port_scanner",
+      "vulnerability_scanner",
+      "risk_assessor",
+      "report_generator"
+    ],
+    "required_inputs": [
+      "target_hosts"
+    ],
+    "expected_outputs": [
+      "vulnerability_report",
+      "risk_assessment"
+    ],
+    "tags": [
+      "vulnerability",
+      "assessment",
+      "security",
+      "scanning"
+    ],
+    "version": "1.0",
+    "created_at": 1756781554.683915,
+    "last_modified": 1756781554.683915,
+    "usage_count": 0,
+    "success_rate": 0.0,
+    "avg_execution_time": 0.0,
+    "adaptation_rules": [],
+    "optimization_hints": {}
+  },
+  "threat_hunting_v1": {
+    "template_id": "threat_hunting_v1",
+    "name": "Threat Hunting Workflow",
+    "description": "Proactive threat hunting and investigation",
+    "category": "investigation",
+    "complexity": "complex",
+    "steps": [
+      {
+        "step_id": "data_collection",
+        "name": "Data Collection",
+        "description": "Collect relevant data sources for analysis",
+        "tool_name": "data_collector",
+        "tool_category": "data_processing",
+        "parameters": {},
+        "dependencies": [],
+        "estimated_duration": 15.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "ioc_analysis",
+        "name": "IOC Analysis",
+        "description": "Analyze indicators of compromise",
+        "tool_name": "ioc_analyzer",
+        "tool_category": "security",
+        "parameters": {},
+        "dependencies": [
+          "data_collection"
+        ],
+        "estimated_duration": 20.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "behavioral_analysis",
+        "name": "Behavioral Analysis",
+        "description": "Analyze behavioral patterns and anomalies",
+        "tool_name": "behavior_analyzer",
+        "tool_category": "security",
+        "parameters": {},
+        "dependencies": [
+          "ioc_analysis"
+        ],
+        "estimated_duration": 25.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "threat_correlation",
+        "name": "Threat Correlation",
+        "description": "Correlate findings with threat intelligence",
+        "tool_name": "threat_correlator",
+        "tool_category": "security",
+        "parameters": {},
+        "dependencies": [
+          "behavioral_analysis"
+        ],
+        "estimated_duration": 20.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "generate_report",
+        "name": "Generate Report",
+        "description": "Generate threat hunting report",
+        "tool_name": "report_generator",
+        "tool_category": "reporting",
+        "parameters": {},
+        "dependencies": [
+          "threat_correlation"
+        ],
+        "estimated_duration": 15.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      }
+    ],
+    "execution_mode": "adaptive",
+    "required_tools": [
+      "data_collector",
+      "ioc_analyzer",
+      "behavior_analyzer",
+      "threat_correlator",
+      "report_generator"
+    ],
+    "required_inputs": [
+      "data_sources"
+    ],
+    "expected_outputs": [
+      "threat_report",
+      "ioc_list",
+      "behavioral_analysis"
+    ],
+    "tags": [
+      "threat",
+      "hunting",
+      "investigation",
+      "security"
+    ],
+    "version": "1.0",
+    "created_at": 1756781554.6839218,
+    "last_modified": 1756781554.6839218,
     "usage_count": 0,
     "success_rate": 0.0,
     "avg_execution_time": 0.0,
