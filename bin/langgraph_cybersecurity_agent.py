@@ -45,12 +45,8 @@ import pandas as pd
 # Session logging imports
 from bin.session_logger import SessionEventType
 
-from bin.mcp_tools import (
-    KnowledgeGraphManager, 
-    FrameworkProcessor, 
-    SessionManager,
-    EncryptionManager
-)
+# Note: EncryptionManager and KnowledgeGraphManager are defined in this file
+# SessionManager and FrameworkProcessor are not currently implemented
 
 # Memory management imports
 from bin.context_memory_manager import ContextMemoryManager
@@ -1417,6 +1413,61 @@ class LangGraphCybersecurityAgent:
             except ImportError as e:
                 print(f"⚠️  Vulnerability scanner not available: {e}")
                 self.vulnerability_scanner = None
+            
+            # Cloud and Enterprise Integration Tools
+            try:
+                from bin.azure_resource_graph import AzureResourceGraphManager
+                self.azure_resource_manager = AzureResourceGraphManager()
+                mcp_tools_available.append("Azure Resource Graph")
+                print("✅ Azure Resource Graph tools initialized")
+            except ImportError as e:
+                print(f"⚠️  Azure Resource Graph tools not available: {e}")
+                self.azure_resource_manager = None
+            
+            try:
+                from bin.google_resource_manager import GoogleResourceManager
+                self.google_resource_manager = GoogleResourceManager()
+                mcp_tools_available.append("Google Resource Manager")
+                print("✅ Google Resource Manager tools initialized")
+            except ImportError as e:
+                print(f"⚠️  Google Resource Manager tools not available: {e}")
+                self.google_resource_manager = None
+            
+            try:
+                from bin.splunk_integration import SplunkIntegration
+                self.splunk_integration = SplunkIntegration()
+                mcp_tools_available.append("Splunk Integration")
+                print("✅ Splunk integration tools initialized")
+            except ImportError as e:
+                print(f"⚠️  Splunk integration tools not available: {e}")
+                self.splunk_integration = None
+            
+            try:
+                from bin.network_tools import NetworkToolsManager
+                self.network_tools = NetworkToolsManager()
+                mcp_tools_available.append("Network Tools")
+                print("✅ Network tools initialized")
+            except ImportError as e:
+                print(f"⚠️  Network tools not available: {e}")
+                self.network_tools = None
+            
+            try:
+                from bin.mitre_attack_mapping_workflow import MitreAttackMappingWorkflow
+                self.mitre_attack_workflow = MitreAttackMappingWorkflow()
+                mcp_tools_available.append("MITRE ATT&CK Mapping")
+                print("✅ MITRE ATT&CK mapping workflow initialized")
+            except ImportError as e:
+                print(f"⚠️  MITRE ATT&CK mapping workflow not available: {e}")
+                self.mitre_attack_workflow = None
+            
+            try:
+                from bin.browser_mcp_tools import BrowserMCPTools
+                self.browser_tools = BrowserMCPTools()
+                mcp_tools_available.append("Browser Automation")
+                print("✅ Browser automation tools initialized")
+            except ImportError as e:
+                print(f"⚠️  Browser automation tools not available: {e}")
+                self.browser_tools = None
             
             if mcp_tools_available:
                 print(f"🔧 MCP integration active with {len(mcp_tools_available)} tool categories:")
