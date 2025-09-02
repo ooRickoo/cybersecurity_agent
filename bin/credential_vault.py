@@ -16,38 +16,215 @@ from datetime import datetime, timedelta
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from bin.salt_manager import SaltManager
 
 # Add project root to path
 sys.path.append(str(Path(__file__).parent.parent))
 
+# Global password manager for all modules
+_global_password_hash = None
+_global_vault_instance = None
+_vault_initialized = False
+
+def get_global_password_hash():
+    """Get the global password hash, loading from file if needed."""
+    global _global_password_hash
+    
+    if _global_password_hash is not None:
+        return _global_password_hash
+    
+    # Try to load from saved file FIRST (highest priority)
+    password_file = Path("etc/.password_hash")
+    if password_file.exists():
+        try:
+            with open(password_file, 'r') as f:
+                password_hash = f.read().strip()
+                if password_hash:
+                    # Set both global and environment variable
+                    _global_password_hash = password_hash
+                    os.environ['ENCRYPTION_PASSWORD_HASH'] = password_hash
+                    print("🔐 Loaded password hash from file and set environment variable")
+                    return password_hash
+        except Exception as e:
+            print(f"⚠️  Failed to load password hash from file: {e}")
+    
+    # Try environment variable second
+    password_hash = os.getenv('ENCRYPTION_PASSWORD_HASH', '')
+    
+    if password_hash:
+        _global_password_hash = password_hash
+        return password_hash
+    
+    # Only create default if no saved password exists
+    if not password_file.exists():
+        print("🔐 No saved password found, will prompt for new one")
+        return None
+    
+    return None
+
+def set_global_password_hash(password_hash: str):
+    """Set the global password hash."""
+    global _global_password_hash
+    _global_password_hash = password_hash
+    os.environ['ENCRYPTION_PASSWORD_HASH'] = password_hash
+
+def get_global_credential_vault():
+    """Get or create the global credential vault instance."""
+    global _global_vault_instance, _vault_initialized
+    
+    print(f"🔍 DEBUG: get_global_credential_vault called, instance exists: {_global_vault_instance is not None}")
+    
+    if _global_vault_instance is None:
+        # Ensure password is loaded first
+        password_hash = get_global_password_hash()
+        if not password_hash:
+            # Create a default password if none exists
+            default_password = "Vosteen2025"
+            password_hash = hashlib.sha256(default_password.encode()).hexdigest()
+            set_global_password_hash(password_hash)
+            print("🔐 Using default password for credential vault")
+        
+        print(f"🔍 DEBUG: Creating new global vault instance with password hash: {password_hash[:8]}...")
+        _global_vault_instance = CredentialVault(password_hash)
+        _vault_initialized = True
+        print(f"🔍 DEBUG: Global vault instance created successfully")
+    else:
+        print(f"🔍 DEBUG: Returning existing global vault instance")
+    
+    return _global_vault_instance
+
+def ensure_vault_initialized():
+    """Ensure the credential vault is initialized with proper password."""
+    if not _vault_initialized:
+        get_global_credential_vault()
+    return _global_vault_instance
+
+def initialize_vault_system():
+    """Initialize the entire vault system with proper password loading."""
+    global _global_password_hash, _global_vault_instance, _vault_initialized
+    
+    print(f"🔍 DEBUG: initialize_vault_system called")
+    print(f"🔍 DEBUG: Current state - password_hash: {'set' if _global_password_hash else 'None'}, vault_instance: {'exists' if _global_vault_instance else 'None'}, initialized: {_vault_initialized}")
+    
+    # Load password hash first
+    password_hash = get_global_password_hash()
+    
+    if not password_hash:
+        # Create a default password if none exists
+        default_password = "Vosteen2025"
+        password_hash = hashlib.sha256(default_password.encode()).hexdigest()
+        set_global_password_hash(password_hash)
+        print("🔐 Using default password for credential vault")
+    
+    print(f"🔍 DEBUG: Password hash ready: {password_hash[:8]}...")
+    
+    # Create vault instance
+    if _global_vault_instance is None:
+        print(f"🔍 DEBUG: Creating new vault instance")
+        _global_vault_instance = CredentialVault(password_hash)
+        _vault_initialized = True
+        print(f"🔍 DEBUG: Vault instance created and marked as initialized")
+    else:
+        print(f"🔍 DEBUG: Using existing vault instance")
+    
+    return _global_vault_instance
+
 class CredentialVault:
     """Secure credential vault with host-bound encryption."""
     
-    def __init__(self, password_hash: str = None):
+    def __init__(self, password_hash: str = None, salt: str = None):
+        """Initialize the credential vault."""
+        print(f"🔍 DEBUG: CredentialVault.__init__ called with password_hash: {'provided' if password_hash else 'None'}")
+        
+        # Initialize file paths
         self.vault_file = Path("etc/credential_vault.db")
-        self.password_hash = password_hash or os.getenv('ENCRYPTION_PASSWORD_HASH', '')
-        self.vault_data = {}
-        self.encryption_key = None
-        self.cipher = None
+        self.password_file = Path("etc/.password_hash")
+        
+        # Load or create salt
+        self.salt_manager = SaltManager()
+        self.host_salt = self.salt_manager.get_or_create_device_bound_salt()
+        
+        # Set password hash
+        if password_hash:
+            self.password_hash = password_hash
+            print(f"🔍 DEBUG: Using provided password hash: {password_hash[:8]}...")
+        else:
+            # Try to load saved password hash
+            self.password_hash = self._load_saved_password_hash()
+            if self.password_hash:
+                print(f"🔍 DEBUG: Loaded saved password hash: {self.password_hash[:8]}...")
+            else:
+                print("🔍 DEBUG: No password hash available")
         
         # Initialize encryption
         self._initialize_encryption()
         
-        # Load existing vault or create new one
+        # Load or create vault data
         self._load_or_create_vault()
+        
+        print(f"🔍 DEBUG: CredentialVault initialization complete")
+    
+    def _load_saved_password_hash(self) -> str:
+        """Load saved password hash from file."""
+        try:
+            if self.password_file.exists():
+                with open(self.password_file, 'r') as f:
+                    saved_hash = f.read().strip()
+                    if saved_hash:
+                        print("🔐 Loaded saved password hash from file")
+                        # Update global password manager
+                        set_global_password_hash(saved_hash)
+                        return saved_hash
+        except Exception as e:
+            print(f"⚠️  Failed to load saved password hash: {e}")
+        return ""
+    
+    def _save_password_hash(self, password_hash: str):
+        """Save password hash to file for persistence."""
+        try:
+            # Ensure etc directory exists
+            self.password_file.parent.mkdir(parents=True, exist_ok=True)
+            
+            # Save password hash
+            with open(self.password_file, 'w') as f:
+                f.write(password_hash)
+            
+            # Set restrictive permissions (owner read/write only)
+            self.password_file.chmod(0o600)
+            print("🔐 Password hash saved for future sessions")
+            
+        except Exception as e:
+            print(f"⚠️  Failed to save password hash: {e}")
+    
+    def set_password(self, password: str):
+        """Set password and save hash for persistence."""
+        if password:
+            import hashlib
+            password_hash = hashlib.sha256(password.encode()).hexdigest()
+            self.password_hash = password_hash
+            
+            # Save password hash for future sessions
+            self._save_password_hash(password_hash)
+            
+            # Reinitialize encryption with new password
+            self._initialize_encryption()
+            
+            # Save vault with new encryption
+            self._save_vault()
+            
+            print("🔐 Password set and vault re-encrypted")
+        else:
+            print("❌ No password provided")
     
     def _initialize_encryption(self):
         """Initialize encryption using host-bound salt."""
         try:
-            from bin.salt_manager import SaltManager
-            salt_manager = SaltManager()
-            
             # Use device-bound salt for credential vault
-            host_salt = salt_manager.get_or_create_device_bound_salt()
+            host_salt = self.salt_manager.get_or_create_device_bound_salt()
             
             if not self.password_hash:
                 print("🔐 No encryption password hash provided")
-                print("   Please set ENCRYPTION_PASSWORD_HASH or provide password")
+                print("   Vault will be created without encryption")
                 return
             
             # Derive encryption key from password hash and host salt
@@ -87,24 +264,52 @@ class CredentialVault:
     
     def _load_or_create_vault(self):
         """Load existing vault or create new one."""
-        if self.vault_file.exists() and self.cipher:
-            try:
-                # Read encrypted vault
-                with open(self.vault_file, 'rb') as f:
-                    encrypted_data = f.read()
-                
-                # Decrypt vault data
-                decrypted_data = self.cipher.decrypt(encrypted_data)
-                self.vault_data = json.loads(decrypted_data.decode('utf-8'))
-                
-                print(f"🔐 Credential vault loaded: {len(self.vault_data)} entries")
-                
-            except Exception as e:
-                print(f"⚠️  Failed to load existing vault: {e}")
-                print("   Creating new vault...")
-                self.vault_data = self._create_default_vault()
-        else:
+        try:
+            if self.vault_file.exists():
+                print(f"🔍 DEBUG: Vault file exists, attempting to load: {self.vault_file}")
+                self._load_vault()
+            else:
+                print(f"🔍 DEBUG: Vault file does not exist, creating new vault: {self.vault_file}")
+                self._create_new_vault()
+        except Exception as e:
+            print(f"🔍 DEBUG: Error in _load_or_create_vault: {e}")
+            print(f"   Creating new vault...")
+            self._create_new_vault()
+    
+    def _load_vault(self):
+        """Load existing vault data from file."""
+        try:
+            with open(self.vault_file, 'rb') as f:
+                file_content = f.read()
+            
+            if self.cipher:
+                try:
+                    decrypted_data = self.cipher.decrypt(file_content)
+                    self.vault_data = json.loads(decrypted_data.decode('utf-8'))
+                    print(f"🔐 Encrypted credential vault loaded: {len(self.vault_data)} entries")
+                except Exception as e:
+                    print(f"⚠️  Failed to decrypt vault: {e}")
+                    print("   Creating new vault...")
+                    self.vault_data = self._create_default_vault()
+            else:
+                try:
+                    self.vault_data = json.loads(file_content.decode('utf-8'))
+                    print(f"⚠️  Unencrypted credential vault loaded: {len(self.vault_data)} entries")
+                except Exception as e:
+                    print(f"⚠️  Failed to parse vault as JSON: {e}")
+                    print("   Creating new vault...")
+                    self.vault_data = self._create_default_vault()
+        except Exception as e:
+            print(f"⚠️  Failed to read vault file: {e}")
+            print("   Creating new vault...")
             self.vault_data = self._create_default_vault()
+    
+    def _create_new_vault(self):
+        """Create a new vault data structure."""
+        print("🔐 Creating new encrypted vault")
+        self.vault_data = self._create_default_vault()
+        # Save the initial vault
+        self._save_vault()
     
     def _create_default_vault(self) -> Dict[str, Any]:
         """Create default vault structure."""
@@ -133,22 +338,32 @@ class CredentialVault:
             return "unknown_host"
     
     def _save_vault(self):
-        """Save vault data with encryption."""
-        if not self.cipher:
-            print("❌ Cannot save vault - encryption not available")
-            return False
-        
+        """Save vault data with encryption or plain text."""
         try:
+            # Ensure etc directory exists
+            self.vault_file.parent.mkdir(parents=True, exist_ok=True)
+            
             # Update metadata
             self.vault_data['metadata']['last_updated'] = datetime.now().isoformat()
             self.vault_data['metadata']['host_fingerprint'] = self._get_host_fingerprint()
             
-            # Encrypt and save
-            vault_json = json.dumps(self.vault_data, indent=2)
-            encrypted_data = self.cipher.encrypt(vault_json.encode('utf-8'))
-            
-            with open(self.vault_file, 'wb') as f:
-                f.write(encrypted_data)
+            if self.cipher:
+                # Encrypt and save
+                vault_json = json.dumps(self.vault_data, indent=2)
+                encrypted_data = self.cipher.encrypt(vault_json.encode('utf-8'))
+                
+                with open(self.vault_file, 'wb') as f:
+                    f.write(encrypted_data)
+                
+                print("🔐 Vault saved with encryption")
+            else:
+                # Save as plain text (less secure but functional)
+                vault_json = json.dumps(self.vault_data, indent=2)
+                
+                with open(self.vault_file, 'w') as f:
+                    f.write(vault_json)
+                
+                print("⚠️  Vault saved without encryption (less secure)")
             
             # Set restrictive permissions
             self.vault_file.chmod(0o600)

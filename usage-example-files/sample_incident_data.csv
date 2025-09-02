@@ -1,0 +1,11 @@
+incident_id,title,description,severity,status,created_time,assigned_to,affected_systems,indicators,tags
+INC-001,"Suspicious Network Activity","Unusual network traffic patterns detected from internal workstation",high,open,2024-01-15 14:30:00,analyst_john,"workstation-01,workstation-02","192.168.1.100,malicious-domain.com","network,suspicious"
+INC-002,"Malware Detection","Malware sample detected on file server",critical,in_progress,2024-01-16 09:15:00,analyst_sarah,file-server-01,"a1b2c3d4e5f6789012345678901234567890abcd","malware,file_server"
+INC-003,"Phishing Attempt","Phishing email campaign targeting employees",medium,contained,2024-01-17 11:45:00,analyst_mike,mail-server-01,"phishing-domain.com,malicious-attachment.pdf","phishing,email"
+INC-004,"Unauthorized Access","Failed login attempts on web server",high,investigating,2024-01-18 16:20:00,analyst_lisa,web-server-01,"192.168.1.100,admin,root","unauthorized_access,web_server"
+INC-005,"Data Exfiltration","Suspicious data transfer to external IP",critical,contained,2024-01-19 08:30:00,analyst_john,"db-server-01,file-server-01","192.168.1.100,external-ip.com","data_exfiltration,insider_threat"
+INC-006,"Ransomware Attack","Ransomware detected on multiple workstations",critical,contained,2024-01-20 13:45:00,analyst_sarah,"workstation-01,workstation-02,workstation-03","ransomware.exe,encrypted_files","ransomware,malware"
+INC-007,"DDoS Attack","Distributed denial of service attack on web server",high,mitigated,2024-01-21 10:15:00,analyst_mike,web-server-01,"multiple-ips,high-traffic","ddos,network_attack"
+INC-008,"Insider Threat","Employee accessing unauthorized files",medium,investigating,2024-01-22 15:30:00,analyst_lisa,"file-server-01,workstation-01","employee-id,unauthorized-files","insider_threat,data_access"
+INC-009,"Vulnerability Exploit","Exploitation of known vulnerability",high,patched,2024-01-23 12:00:00,analyst_john,web-server-01,"cve-2024-0001,exploit-code","vulnerability,exploit"
+INC-010,"Social Engineering","Social engineering attack on IT staff",medium,contained,2024-01-24 09:45:00,analyst_sarah,"mail-server-01,workstation-01","fake-email,credential-theft","social_engineering,phishing"

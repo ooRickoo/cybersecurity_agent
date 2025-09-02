@@ -1,0 +1,52 @@
+[
+  {
+    "timestamp": "2025-01-15T10:30:00Z",
+    "event_type": "authentication_failure",
+    "source_ip": "192.168.1.100",
+    "destination_ip": "192.168.1.1",
+    "user": "admin",
+    "severity": "medium",
+    "description": "Multiple failed login attempts detected",
+    "raw_log": "Jan 15 10:30:00 auth: Failed login attempt for user 'admin' from 192.168.1.100"
+  },
+  {
+    "timestamp": "2025-01-15T10:32:15Z",
+    "event_type": "suspicious_activity",
+    "source_ip": "10.0.0.50",
+    "destination_ip": "192.168.1.200",
+    "user": "system",
+    "severity": "high",
+    "description": "Unusual network traffic pattern detected",
+    "raw_log": "Jan 15 10:32:15 network: High volume of connections from 10.0.0.50 to 192.168.1.200"
+  },
+  {
+    "timestamp": "2025-01-15T10:35:22Z",
+    "event_type": "file_access",
+    "source_ip": "192.168.1.150",
+    "destination_ip": "192.168.1.50",
+    "user": "john.doe",
+    "severity": "low",
+    "description": "Access to sensitive file detected",
+    "raw_log": "Jan 15 10:35:22 file: User 'john.doe' accessed /confidential/project_data.xlsx"
+  },
+  {
+    "timestamp": "2025-01-15T10:40:05Z",
+    "event_type": "malware_detection",
+    "source_ip": "192.168.1.75",
+    "destination_ip": "external",
+    "user": "system",
+    "severity": "critical",
+    "description": "Malware signature detected in file",
+    "raw_log": "Jan 15 10:40:05 antivirus: Malware 'Trojan.Generic.12345' detected in /downloads/suspicious.exe"
+  },
+  {
+    "timestamp": "2025-01-15T10:45:18Z",
+    "event_type": "privilege_escalation",
+    "source_ip": "192.168.1.100",
+    "destination_ip": "192.168.1.1",
+    "user": "admin",
+    "severity": "high",
+    "description": "Successful privilege escalation attempt",
+    "raw_log": "Jan 15 10:45:18 security: User 'admin' successfully escalated privileges to root"
+  }
+]

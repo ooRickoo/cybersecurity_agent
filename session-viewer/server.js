@@ -14,7 +14,13 @@ const fs = require('fs-extra');
 const chokidar = require('chokidar');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
-const sqlite3 = require('sqlite3').verbose();
+// Make sqlite3 optional - use fallback if not available
+let sqlite3 = null;
+try {
+  sqlite3 = require('sqlite3').verbose();
+} catch (error) {
+  console.log('⚠️  sqlite3 not available, using file-based fallback');
+}
 
 const app = express();
 const server = createServer(app);
@@ -36,10 +42,12 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
       imgSrc: ["'self'", "data:", "blob:"],
-      connectSrc: ["'self'", "ws:", "wss:"]
+      connectSrc: ["'self'", "ws:", "wss:", "http://localhost:3001"],
+      workerSrc: ["'self'", "blob:"]
     }
   }
 }));
@@ -47,7 +55,11 @@ app.use(compression());
 app.use(cors());
 app.use(morgan('combined'));
 app.use(express.json({ limit: '50mb' }));
+// Serve React app from build directory first (takes priority)
 app.use(express.static(path.join(__dirname, 'client', 'build')));
+
+// Serve static files from public directory (fallback for development resources)
+app.use(express.static(path.join(__dirname, 'client', 'public')));
 
 // File watcher for real-time updates
 let fileWatcher = null;
@@ -81,6 +93,13 @@ function initializeFileWatcher() {
 // Database functions
 function getSessionsFromDatabase() {
   return new Promise((resolve, reject) => {
+    // If sqlite3 is not available, use file-based fallback
+    if (!sqlite3) {
+      console.log('📁 sqlite3 not available, using file-based fallback');
+      resolve([]);
+      return;
+    }
+    
     const dbPath = path.join(SAMPLE_DATA_DIR, 'sessions.db');
     
     if (!fs.existsSync(dbPath)) {
@@ -149,104 +168,7 @@ function getSessionsFromDatabase() {
 
 // API Routes
 
-// Get session outputs directory structure
-app.get('/api/sessions', async (req, res) => {
-  try {
-    // Try to get sessions from sample database first
-    let sessions = await getSessionsFromDatabase();
-    
-    // If no sample data, fall back to directory scanning
-    if (!sessions || sessions.length === 0) {
-      sessions = await getSessionsStructure();
-    }
-    
-    res.json({ success: true, sessions });
-  } catch (error) {
-    console.error('Error getting sessions:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Get specific session outputs
-app.get('/api/sessions/:sessionId', async (req, res) => {
-  try {
-    const { sessionId } = req.params;
-    const sessionData = await getSessionData(sessionId);
-    res.json({ success: true, session: sessionData });
-  } catch (error) {
-    console.error('Error getting session data:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Get file content
-app.get('/api/files/:filePath(*)', async (req, res) => {
-  try {
-    const { filePath } = req.params;
-    const fullPath = path.join(__dirname, '..', filePath);
-    
-    if (!fs.existsSync(fullPath)) {
-      return res.status(404).json({ success: false, error: 'File not found' });
-    }
-    
-    const stats = await fs.stat(fullPath);
-    const ext = path.extname(fullPath).toLowerCase();
-    
-    // Handle different file types
-    if (ext === '.json') {
-      const content = await fs.readFile(fullPath, 'utf8');
-      res.json({ success: true, content: JSON.parse(content), stats });
-    } else if (ext === '.csv') {
-      const content = await fs.readFile(fullPath, 'utf8');
-      res.json({ success: true, content, stats, type: 'csv' });
-    } else if (ext === '.png' || ext === '.jpg' || ext === '.jpeg' || ext === '.svg') {
-      res.sendFile(fullPath);
-    } else if (ext === '.md') {
-      const content = await fs.readFile(fullPath, 'utf8');
-      res.json({ success: true, content, stats, type: 'markdown' });
-    } else {
-      // Binary or unknown file type
-      res.json({ success: true, stats, type: 'binary' });
-    }
-  } catch (error) {
-    console.error('Error reading file:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Download file
-app.get('/api/download/:filePath(*)', async (req, res) => {
-  try {
-    const { filePath } = req.params;
-    const fullPath = path.join(__dirname, '..', filePath);
-    
-    if (!fs.existsSync(fullPath)) {
-      return res.status(404).json({ success: false, error: 'File not found' });
-    }
-    
-    res.download(fullPath);
-  } catch (error) {
-    console.error('Error downloading file:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Get system status
-app.get('/api/status', async (req, res) => {
-  try {
-    const status = {
-      server: 'running',
-      timestamp: new Date().toISOString(),
-      sessionsCount: await getSessionsCount(),
-      totalFiles: await getTotalFilesCount(),
-      diskUsage: await getDiskUsage()
-    };
-    res.json({ success: true, status });
-  } catch (error) {
-    console.error('Error getting status:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
+// API routes are now defined after the Socket.IO section to ensure proper order
 
 // Helper functions
 async function getSessionsStructure() {
@@ -277,25 +199,40 @@ async function getSessionsStructure() {
 
 async function getSessionDirectoryData(sessionPath, sessionDir) {
   try {
-    const files = await fs.readdir(sessionPath);
     const fileStats = [];
     let totalSize = 0;
     
-    for (const file of files) {
-      const filePath = path.join(sessionPath, file);
-      const stats = await fs.stat(filePath);
-      totalSize += stats.size;
+    // Recursively scan for all files in the session directory
+    const walk = async (dir, relativePath = '') => {
+      const items = await fs.readdir(dir);
       
-      fileStats.push({
-        name: file,
-        path: path.join(sessionPath, file),
-        size: stats.size,
-        sizeFormatted: formatFileSize(stats.size),
-        type: getFileType(file),
-        lastModified: stats.mtime,
-        isDirectory: stats.isDirectory()
-      });
-    }
+      for (const item of items) {
+        const itemPath = path.join(dir, item);
+        const stats = await fs.stat(itemPath);
+        const relativeItemPath = relativePath ? path.join(relativePath, item) : item;
+        
+        if (stats.isDirectory()) {
+          // Recursively scan subdirectories
+          await walk(itemPath, relativeItemPath);
+        } else {
+          // Add file to the list
+          totalSize += stats.size;
+          fileStats.push({
+            name: item,
+            path: relativeItemPath, // Use relative path for display
+            fullPath: itemPath,     // Keep full path for operations
+            size: stats.size,
+            sizeFormatted: formatFileSize(stats.size),
+            type: getFileType(item),
+            lastModified: stats.mtime,
+            isDirectory: false
+          });
+        }
+      }
+    };
+    
+    // Start recursive scan from the session directory
+    await walk(sessionPath);
     
     return {
       id: sessionDir,
@@ -416,7 +353,159 @@ io.on('connection', (socket) => {
   });
 });
 
-// Serve React app for all other routes
+// API routes must come BEFORE the catch-all route
+app.get('/api/sessions', async (req, res) => {
+  try {
+    const sessions = await getSessionsStructure();
+    res.json({ sessions });
+  } catch (error) {
+    console.error('Error fetching sessions:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/sessions/:sessionId', async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const sessions = await getSessionsStructure();
+    const session = sessions.find(s => s.id === sessionId);
+    
+    if (!session) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+    
+    res.json({ success: true, session });
+  } catch (error) {
+    console.error('Error fetching session:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Serve raw file content for viewing
+app.get('/api/view/:filePath(*)', async (req, res) => {
+  try {
+    const { filePath } = req.params;
+    // URL decode the file path to handle encoded characters like %2F
+    const decodedFilePath = decodeURIComponent(filePath);
+    const fullPath = path.join(SESSION_OUTPUTS_DIR, decodedFilePath);
+    
+    if (!fs.existsSync(fullPath)) {
+      return res.status(404).send('File not found');
+    }
+    
+    const stats = await fs.stat(fullPath);
+    if (stats.isDirectory()) {
+      return res.status(400).send('Cannot read directory');
+    }
+    
+    // Determine content type based on file extension
+    const ext = path.extname(fullPath).toLowerCase();
+    let contentType = 'text/plain';
+    
+    if (ext === '.html' || ext === '.htm') {
+      contentType = 'text/html';
+    } else if (ext === '.css') {
+      contentType = 'text/css';
+    } else if (ext === '.js') {
+      contentType = 'application/javascript';
+    } else if (ext === '.json') {
+      contentType = 'application/json';
+    } else if (ext === '.xml') {
+      contentType = 'application/xml';
+    } else if (ext === '.csv') {
+      contentType = 'text/csv';
+    } else if (ext === '.pdf') {
+      contentType = 'application/pdf';
+    } else if (ext.match(/\.(png|jpg|jpeg|gif|svg)$/)) {
+      contentType = `image/${ext.slice(1)}`;
+    }
+    
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Disposition', `inline; filename="${path.basename(fullPath)}"`);
+    
+    // For binary files, serve as binary
+    if (ext === '.pdf' || ext.match(/\.(png|jpg|jpeg|gif|svg)$/)) {
+      const content = await fs.readFile(fullPath);
+      res.send(content);
+    } else {
+      // For text files, serve as text
+      const content = await fs.readFile(fullPath, 'utf8');
+      res.send(content);
+    }
+  } catch (error) {
+    console.error('Error serving file:', error);
+    res.status(500).send('Error serving file');
+  }
+});
+
+// API endpoint for programmatic access (returns JSON)
+app.get('/api/files/:filePath(*)', async (req, res) => {
+  try {
+    const { filePath } = req.params;
+    // URL decode the file path to handle encoded characters like %2F
+    const decodedFilePath = decodeURIComponent(filePath);
+    const fullPath = path.join(SESSION_OUTPUTS_DIR, decodedFilePath);
+    
+    if (!fs.existsSync(fullPath)) {
+      return res.status(404).json({ error: 'File not found' });
+    }
+    
+    const stats = await fs.stat(fullPath);
+    if (stats.isDirectory()) {
+      return res.status(400).json({ error: 'Cannot read directory' });
+    }
+    
+    const content = await fs.readFile(fullPath, 'utf8');
+    res.json({ content, path: filePath });
+  } catch (error) {
+    console.error('Error reading file:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/download/:filePath(*)', async (req, res) => {
+  try {
+    const { filePath } = req.params;
+    // URL decode the file path to handle encoded characters like %2F
+    const decodedFilePath = decodeURIComponent(filePath);
+    const fullPath = path.join(SESSION_OUTPUTS_DIR, decodedFilePath);
+    
+    if (!fs.existsSync(fullPath)) {
+      return res.status(404).json({ error: 'File not found' });
+    }
+    
+    const stats = await fs.stat(fullPath);
+    if (stats.isDirectory()) {
+      return res.status(400).json({ error: 'Cannot download directory' });
+    }
+    
+    res.download(fullPath);
+  } catch (error) {
+    console.error('Error downloading file:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/status', async (req, res) => {
+  try {
+    const sessionCount = await getSessionsCount();
+    const diskUsage = await getDiskUsage();
+    
+    res.json({
+      status: {
+        server: 'running',
+        timestamp: new Date().toISOString(),
+        sessionCount,
+        diskUsage
+      }
+    });
+  } catch (error) {
+    console.error('Error getting status:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Serve React app for all other routes (must be LAST)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
 });

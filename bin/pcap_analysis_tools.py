@@ -657,6 +657,145 @@ class PCAPAnalyzer:
         
         return extracted_files
     
+    def _analyze_with_scapy(self, pcap_path: str, file_size: int, file_stat: os.stat_result, analysis_type: str) -> PCAPSummary:
+        """Analyze PCAP using scapy."""
+        try:
+            import scapy.all as scapy
+            
+            # Read PCAP file
+            packets = scapy.rdpcap(pcap_path)
+            
+            # Basic analysis
+            total_packets = len(packets)
+            protocols = {}
+            flows = {}
+            security_indicators = []
+            
+            # Analyze each packet
+            for packet in packets:
+                # Protocol analysis
+                if packet.haslayer(scapy.IP):
+                    protocol = "IP"
+                    if packet.haslayer(scapy.TCP):
+                        protocol = "TCP"
+                    elif packet.haslayer(scapy.UDP):
+                        protocol = "UDP"
+                    elif packet.haslayer(scapy.ICMP):
+                        protocol = "ICMP"
+                    
+                    protocols[protocol] = protocols.get(protocol, 0) + 1
+                    
+                    # Flow analysis
+                    if packet.haslayer(scapy.IP):
+                        src_ip = packet[scapy.IP].src
+                        dst_ip = packet[scapy.IP].dst
+                        flow_key = f"{src_ip}-{dst_ip}"
+                        flows[flow_key] = flows.get(flow_key, 0) + 1
+                    
+                    # Security indicators
+                    if packet.haslayer(scapy.TCP):
+                        if packet[scapy.TCP].flags & 0x02:  # SYN flag
+                            security_indicators.append("SYN scan detected")
+                        if packet[scapy.TCP].flags & 0x01:  # FIN flag
+                            security_indicators.append("FIN scan detected")
+            
+            # Create summary
+            summary = PCAPSummary(
+                file_path=pcap_path,
+                file_size=file_size,
+                packet_count=total_packets,
+                duration=0.1,  # Simple analysis
+                start_time=datetime.now(),
+                end_time=datetime.now(),
+                protocols=protocols,
+                top_talkers=list(flows.items())[:10],
+                top_flows=[],
+                technology_stack=[],
+                anomalies=[],
+                extracted_files=[],
+                statistics={},
+                encryption_analysis=[],
+                tls_sessions={},
+                security_metrics={}
+            )
+            
+            return summary
+            
+        except Exception as e:
+            logger.error(f"Scapy analysis failed: {e}")
+            raise PCAPAnalysisError(f"Scapy analysis failed: {e}")
+    
+    def _analyze_with_dpkt(self, pcap_path: str, file_size: int, file_stat: os.stat_result, analysis_type: str) -> PCAPSummary:
+        """Analyze PCAP using dpkt."""
+        try:
+            import dpkt
+            
+            # Read PCAP file
+            with open(pcap_path, 'rb') as f:
+                pcap = dpkt.pcap.Reader(f)
+                
+                total_packets = 0
+                protocols = {}
+                flows = {}
+                security_indicators = []
+                
+                for timestamp, buf in pcap:
+                    total_packets += 1
+                    
+                    try:
+                        eth = dpkt.ethernet.Ethernet(buf)
+                        if eth.type == dpkt.ethernet.ETH_TYPE_IP:
+                            ip = eth.data
+                            protocol = "IP"
+                            
+                            if ip.p == dpkt.ip.IP_PROTO_TCP:
+                                protocol = "TCP"
+                                tcp = ip.data
+                                if tcp.flags & dpkt.tcp.TH_SYN:
+                                    security_indicators.append("SYN scan detected")
+                            elif ip.p == dpkt.ip.IP_PROTO_UDP:
+                                protocol = "UDP"
+                            elif ip.p == dpkt.ip.IP_PROTO_ICMP:
+                                protocol = "ICMP"
+                            
+                            protocols[protocol] = protocols.get(protocol, 0) + 1
+                            
+                            # Flow analysis
+                            src_ip = dpkt.inet.inet_ntoa(ip.src)
+                            dst_ip = dpkt.inet.inet_ntoa(ip.dst)
+                            flow_key = f"{src_ip}-{dst_ip}"
+                            flows[flow_key] = flows.get(flow_key, 0) + 1
+                            
+                    except Exception as e:
+                        logger.warning(f"Error parsing packet: {e}")
+                        continue
+            
+            # Create summary
+            summary = PCAPSummary(
+                file_path=pcap_path,
+                file_size=file_size,
+                packet_count=total_packets,
+                duration=0.1,  # Simple analysis
+                start_time=datetime.now(),
+                end_time=datetime.now(),
+                protocols=protocols,
+                top_talkers=list(flows.items())[:10],
+                top_flows=[],
+                technology_stack=[],
+                anomalies=[],
+                extracted_files=[],
+                statistics={},
+                encryption_analysis=[],
+                tls_sessions={},
+                security_metrics={}
+            )
+            
+            return summary
+            
+        except Exception as e:
+            logger.error(f"DPKT analysis failed: {e}")
+            raise PCAPAnalysisError(f"DPKT analysis failed: {e}")
+    
     def _generate_statistics(self, packets: List[PacketInfo], flows: Dict[str, FlowInfo], protocols: Dict[str, int]) -> Dict[str, Any]:
         """Generate comprehensive traffic statistics."""
         stats = {

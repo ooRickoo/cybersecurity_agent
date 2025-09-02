@@ -1659,6 +1659,25 @@ class MCPServer:
                 handler=self._ai_workflow_optimization_handler,
                 category="ai_integration",
                 tags=["openai", "workflow_optimization", "performance", "efficiency", "planning"]
+            ),
+            
+            MCPTool(
+                name="ai_patent_analysis",
+                description="Use OpenAI to analyze patents and generate value propositions and categorizations",
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "patent_title": {"type": "string", "description": "Patent title"},
+                        "patent_abstract": {"type": "string", "description": "Patent abstract"},
+                        "analysis_type": {"type": "string", "enum": ["value_proposition", "categorization", "both"], "description": "Type of analysis to perform", "default": "both"},
+                        "model": {"type": "string", "description": "OpenAI model to use", "default": "gpt-4"},
+                        "temperature": {"type": "number", "minimum": 0, "maximum": 2, "description": "Creativity level", "default": 0.3}
+                    },
+                    "required": ["patent_title", "patent_abstract"]
+                },
+                handler=self._ai_patent_analysis_handler,
+                category="ai_integration",
+                tags=["openai", "patent_analysis", "intellectual_property", "cybersecurity", "categorization"]
             )
         ]
         
@@ -2636,6 +2655,114 @@ class MCPServer:
         except Exception as e:
             return {"success": False, "error": f"AI workflow optimization failed: {str(e)}"}
     
+    def _ai_patent_analysis_handler(self, **kwargs):
+        """Handler for AI-powered patent analysis."""
+        try:
+            # Check if OpenAI is configured
+            if not self.openai_configured:
+                return {"success": False, "error": "OpenAI API not configured. Please set OPENAI_API_KEY environment variable."}
+            
+            patent_title = kwargs.get("patent_title")
+            patent_abstract = kwargs.get("patent_abstract")
+            analysis_type = kwargs.get("analysis_type", "both")
+            model = kwargs.get("model", "gpt-4")
+            temperature = kwargs.get("temperature", 0.3)
+            
+            if not patent_title or not patent_abstract:
+                return {"success": False, "error": "Patent title and abstract are required for analysis"}
+            
+            results = {}
+            
+            # Generate value proposition if requested
+            if analysis_type in ["value_proposition", "both"]:
+                kvp_system_prompt = self._get_patent_kvp_system_prompt()
+                kvp_user_prompt = f"""Analyze this patent and provide a concise 1-3 line summary of its key value proposition:
+
+Title: {patent_title}
+Abstract: {patent_abstract}
+
+Focus on:
+- What problem does it solve?
+- What makes it innovative?
+- What are the key benefits?
+
+Provide a clear, business-focused summary in 1-3 lines:"""
+
+                kvp_response = self._call_openai_api(
+                    system_prompt=kvp_system_prompt,
+                    user_prompt=kvp_user_prompt,
+                    model=model,
+                    max_tokens=300,
+                    temperature=temperature
+                )
+                
+                if kvp_response.get("success"):
+                    results["value_proposition"] = kvp_response.get("content")
+                    results["kvp_tokens_used"] = kvp_response.get("tokens_used")
+                    results["kvp_cost"] = kvp_response.get("cost")
+                else:
+                    results["value_proposition"] = f"Analysis failed: {kvp_response.get('error')}"
+            
+            # Generate categorization if requested
+            if analysis_type in ["categorization", "both"]:
+                cat_system_prompt = self._get_patent_category_system_prompt()
+                cat_user_prompt = f"""Based on this patent information, assign it to ONE of these cybersecurity categories:
+
+Title: {patent_title}
+Abstract: {patent_abstract}
+
+Categories:
+- Network Security
+- Endpoint Protection
+- Identity & Access Management
+- Data Protection & Encryption
+- Threat Detection & Response
+- Vulnerability Management
+- Security Operations
+- Compliance & Governance
+- Application Security
+- Infrastructure Security
+- Cloud Security
+- IoT Security
+- Mobile Security
+- Incident Response
+- Forensic Analysis
+- Other
+
+Choose the SINGLE most appropriate category:"""
+
+                cat_response = self._call_openai_api(
+                    system_prompt=cat_system_prompt,
+                    user_prompt=cat_user_prompt,
+                    model=model,
+                    max_tokens=100,
+                    temperature=temperature
+                )
+                
+                if cat_response.get("success"):
+                    results["category"] = cat_response.get("content")
+                    results["cat_tokens_used"] = cat_response.get("tokens_used")
+                    results["cat_cost"] = cat_response.get("cost")
+                else:
+                    results["category"] = f"Analysis failed: {cat_response.get('error')}"
+            
+            # Calculate total tokens and cost
+            total_tokens = results.get("kvp_tokens_used", 0) + results.get("cat_tokens_used", 0)
+            total_cost = results.get("kvp_cost", 0) + results.get("cat_cost", 0)
+            
+            return {
+                "success": True,
+                "patent_title": patent_title,
+                "analysis_type": analysis_type,
+                "model": model,
+                "total_tokens_used": total_tokens,
+                "total_cost": total_cost,
+                **results
+            }
+                
+        except Exception as e:
+            return {"success": False, "error": f"AI patent analysis failed: {str(e)}"}
+    
     def _create_ascii_art(self, text: str, style: str, width: int) -> str:
         """Create ASCII art from text using different styles."""
         text = text.upper()
@@ -2724,29 +2851,26 @@ class MCPServer:
     
     def _simple_ascii_art(self, text: str, width: int) -> str:
         """Generate simple ASCII art."""
-        art = f"""
-╔{'═' * (len(text) + 4)}╗
-║  {text}  ║
-╚{'═' * (len(text) + 4)}╝
+        art = f"""    ╔{'═' * (len(text) + 4)}╗
+    ║  {text}  ║
+    ╚{'═' * (len(text) + 4)}╝
 """
         return art
     
     def _block_ascii_art(self, text: str, width: int) -> str:
         """Generate block-style ASCII art."""
-        art = f"""
-┌{'─' * (len(text) + 4)}┐
-│  {text}  │
-└{'─' * (len(text) + 4)}┘
+        art = f"""    ┌{'─' * (len(text) + 4)}┐
+    │  {text}  │
+    └{'─' * (len(text) + 4)}┘
 """
         return art
     
     def _matrix_ascii_art(self, text: str, width: int) -> str:
         """Generate matrix-style ASCII art."""
         matrix_chars = "01"
-        art = f"""
-╔{'═' * (len(text) + 4)}╗
-║  {text}  ║
-╚{'═' * (len(text) + 4)}╝
+        art = f"""    ╔{'═' * (len(text) + 4)}╗
+    ║  {text}  ║
+    ╚{'═' * (len(text) + 4)}╝
 """
         # Add matrix-style decoration
         matrix_lines = []
@@ -2758,10 +2882,9 @@ class MCPServer:
     
     def _hacker_ascii_art(self, text: str, width: int) -> str:
         """Generate hacker-style ASCII art."""
-        art = f"""
-╔{'═' * (len(text) + 4)}╗
-║  {text}  ║
-╚{'═' * (len(text) + 4)}╝
+        art = f"""    ╔{'═' * (len(text) + 4)}╗
+    ║  {text}  ║
+    ╚{'═' * (len(text) + 4)}╝
 """
         # Add hacker-style decoration
         hacker_lines = [
@@ -3079,6 +3202,51 @@ class MCPServer:
         
         return prompts.get(optimization_goal, prompts["performance"])
     
+    def _get_patent_kvp_system_prompt(self) -> str:
+        """Get system prompt for patent key value proposition analysis."""
+        return """You are a cybersecurity patent analyst specializing in identifying key value propositions. 
+        
+Your task is to analyze patent information and provide a concise 1-3 line summary of the patent's key value proposition.
+
+Focus on:
+- What problem does this patent solve?
+- What makes it innovative or unique?
+- What are the key benefits for cybersecurity?
+
+Provide a clear, business-focused summary that would be valuable for:
+- Technology assessment teams
+- Investment decision makers
+- Competitive intelligence analysts
+
+Keep your response concise and actionable."""
+
+    def _get_patent_category_system_prompt(self) -> str:
+        """Get system prompt for patent categorization."""
+        return """You are a cybersecurity patent classification expert. 
+        
+Your task is to assign the given patent to ONE of these cybersecurity categories:
+
+- Network Security
+- Endpoint Protection
+- Identity & Access Management
+- Data Protection & Encryption
+- Threat Detection & Response
+- Vulnerability Management
+- Security Operations
+- Compliance & Governance
+- Application Security
+- Infrastructure Security
+- Cloud Security
+- IoT Security
+- Mobile Security
+- Incident Response
+- Forensic Analysis
+- Other
+
+Choose the SINGLE most appropriate category based on the patent's title, abstract, and technical focus.
+
+Provide only the category name as your response."""
+    
     def _parse_categorization_response(self, response: str, categories: List[str], 
                                      confidence_threshold: float, include_reasoning: bool) -> Dict[str, Any]:
         """Parse the AI response for categorization results."""
@@ -3255,6 +3423,32 @@ class MCPServer:
             "success": True,
             "resource": self.resources[resource_name]
         }
+    
+    async def execute_tool(self, tool_name: str, parameters: dict) -> dict:
+        """Execute a tool by name with given parameters."""
+        try:
+            if tool_name not in self.tools:
+                return {
+                    "success": False,
+                    "error": f"Tool '{tool_name}' not found. Available tools: {list(self.tools.keys())}"
+                }
+            
+            tool = self.tools[tool_name]
+            result = await self._call_tool_handler(name=tool_name, arguments=parameters)
+            
+            return {
+                "success": True,
+                "result": result,
+                "tool_name": tool_name
+            }
+            
+        except Exception as e:
+            self.logger.error(f"Error executing tool {tool_name}: {e}")
+            return {
+                "success": False,
+                "error": f"Tool execution failed: {str(e)}",
+                "tool_name": tool_name
+            }
 
 # Core Tool Classes
 class DataFrameManager:
@@ -3495,8 +3689,19 @@ class ToolManager:
     def sqlite_manager(self):
         """Lazy load SQLiteManager only when needed."""
         if self._sqlite_manager is None:
-            # For now, create a placeholder - you can add the actual SQLiteManager class later
-            self._sqlite_manager = type('SQLiteManager', (), {})()
+            try:
+                from bin.sqlite_manager import SQLiteManager
+                self._sqlite_manager = SQLiteManager()
+                logger.info("✅ SQLite Manager initialized")
+            except ImportError as e:
+                logger.warning(f"⚠️ SQLite Manager not available: {e}")
+                # Create a minimal placeholder
+                self._sqlite_manager = type('SQLiteManager', (), {
+                    'insert_data': lambda *args, **kwargs: {"success": False, "error": "SQLite Manager not available"},
+                    'query_data': lambda *args, **kwargs: [],
+                    'update_data': lambda *args, **kwargs: {"success": False, "error": "SQLite Manager not available"},
+                    'delete_data': lambda *args, **kwargs: {"success": False, "error": "SQLite Manager not available"}
+                })()
             # Trigger dynamic tool discovery only if MCP server exists
             if self._mcp_server:
                 self._mcp_server.discover_available_tools()
@@ -3517,8 +3722,19 @@ class ToolManager:
     def file_tools(self):
         """Lazy load FileTools only when needed."""
         if self._file_tools is None:
-            # For now, create a placeholder - you can add the actual FileTools class later
-            self._file_tools = type('FileTools', (), {})()
+            try:
+                from bin.file_tools_manager import FileToolsManager
+                self._file_tools = FileToolsManager()
+                logger.info("✅ File Tools Manager initialized")
+            except ImportError as e:
+                logger.warning(f"⚠️ File Tools Manager not available: {e}")
+                # Create a minimal placeholder
+                self._file_tools = type('FileToolsManager', (), {
+                    'get_file_metadata': lambda *args, **kwargs: {"error": "File Tools Manager not available"},
+                    'analyze_file': lambda *args, **kwargs: {"error": "File Tools Manager not available"},
+                    'extract_archive': lambda *args, **kwargs: {"success": False, "error": "File Tools Manager not available"},
+                    'find_files': lambda *args, **kwargs: []
+                })()
             # Trigger dynamic tool discovery only if MCP server exists
             if self._mcp_server:
                 self._mcp_server.discover_available_tools()

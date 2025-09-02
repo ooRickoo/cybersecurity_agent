@@ -738,7 +738,8 @@ class DatabaseManager:
         
         if CREDENTIAL_VAULT_AVAILABLE:
             try:
-                self.credential_vault = CredentialVault()
+                from bin.credential_vault import get_global_credential_vault
+                self.credential_vault = get_global_credential_vault()
                 logger.info("Credential vault initialized")
             except Exception as e:
                 logger.warning(f"Failed to initialize credential vault: {e}")

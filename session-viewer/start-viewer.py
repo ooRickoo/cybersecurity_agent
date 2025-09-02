@@ -20,7 +20,7 @@ class SessionViewerLauncher:
         self.server_process = None
         self.is_running = False
         
-    def start_viewer(self, port=3001):
+    def start_viewer(self, port=3001, session_id=None, auto_open=True):
         """Start the session viewer server and open browser."""
         try:
             print("🚀 Starting Cybersecurity Agent Session Viewer...")
@@ -46,7 +46,7 @@ class SessionViewerLauncher:
             
             # Start the server
             print(f"🌐 Starting server on port {port}...")
-            self.server_process = self._start_server(port)
+            self.server_process = self._start_server(port, session_id)
             
             if not self.server_process:
                 print("❌ Failed to start server.")
@@ -57,12 +57,20 @@ class SessionViewerLauncher:
             # Wait a moment for server to start
             time.sleep(3)
             
-            # Open browser
-            url = f"http://localhost:{port}"
-            print(f"🔗 Opening browser: {url}")
-            webbrowser.open(url)
+            # Open browser with specific session if provided
+            if session_id and auto_open:
+                url = f"http://localhost:{port}/session/{session_id}"
+                print(f"🌐 Opening session viewer in browser: {url}")
+                webbrowser.open(url)
+            elif auto_open:
+                url = f"http://localhost:{port}"
+                print(f"🔗 Opening browser: {url}")
+                webbrowser.open(url)
             
             print("✅ Session viewer started successfully!")
+            if session_id:
+                print(f"📁 Session: {session_id}")
+                print(f"🌐 URL: {url}")
             print("   - Close this terminal to stop the viewer")
             print("   - Or press Ctrl+C to stop")
             print("   - Browser tab can be closed and reopened")
@@ -169,14 +177,16 @@ class SessionViewerLauncher:
             print(f"❌ Error building client: {e}")
             return False
     
-    def _start_server(self, port):
+    def _start_server(self, port, session_id=None):
         """Start the Node.js server."""
         try:
             os.chdir(self.viewer_dir)
             
-            # Set environment variable for port
+            # Set environment variables
             env = os.environ.copy()
             env['PORT'] = str(port)
+            if session_id:
+                env['SESSION_ID'] = str(session_id)
             
             # Start the server
             process = subprocess.Popen(
@@ -212,14 +222,19 @@ def main():
     
     parser = argparse.ArgumentParser(description='Launch Cybersecurity Agent Session Viewer')
     parser.add_argument('--port', type=int, default=3001, help='Port to run the viewer on (default: 3001)')
+    parser.add_argument('--session-id', type=str, help='Session ID to display')
+    parser.add_argument('--auto-open', action='store_true', default=True, help='Open browser automatically (default: true)')
     parser.add_argument('--no-browser', action='store_true', help='Don\'t open browser automatically')
     
     args = parser.parse_args()
     
+    # Handle --no-browser flag
+    auto_open = args.auto_open and not args.no_browser
+    
     launcher = SessionViewerLauncher()
     
     try:
-        success = launcher.start_viewer(args.port)
+        success = launcher.start_viewer(args.port, args.session_id, auto_open)
         if success:
             print("\n🎉 Session viewer is running!")
             print("   Use Ctrl+C to stop the viewer")

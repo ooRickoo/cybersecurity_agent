@@ -1,84 +1,219 @@
-# Core dependencies
-pandas>=1.5.0
-numpy>=1.21.0
-requests>=2.28.0
-python-dotenv>=0.19.0
+# ============================================================================
+# CYBERSECURITY AGENT - COMPLETE DEPENDENCIES
+# ============================================================================
+# Default: Full Features Enabled
+# To disable optional features, comment out the relevant sections
 
-# Database drivers
-pyodbc>=4.0.35          # For MSSQL connections
-pymongo>=4.3.0           # For MongoDB connections
-psycopg2-binary>=2.9.0   # For PostgreSQL connections
-mysql-connector-python>=8.0.0  # For MySQL connections
+# ============================================================================
+# CORE DEPENDENCIES (REQUIRED)
+# ============================================================================
+pandas>=1.5.0                    # Data manipulation and analysis
+numpy>=1.21.0                    # Numerical computing
+requests>=2.28.0                 # HTTP library for API calls
+python-dotenv>=0.19.0            # Environment variable management
+click>=8.1.0                     # CLI framework
+rich>=13.7.0                     # Rich terminal output
+tqdm>=4.66.0                     # Progress bars
+pyyaml>=6.0.1                    # YAML processing
+toml>=0.10.2                     # TOML configuration files
+aiohttp>=3.9.0                   # Async HTTP requests
+aiofiles>=23.2.0                 # Async file operations
 
-# Active Directory / LDAP
-ldap3>=2.9.0             # Modern LDAP library (recommended)
-python-ldap>=3.4.0       # Alternative LDAP library
+# ============================================================================
+# AI/ML & WORKFLOW ENGINE (REQUIRED)
+# ============================================================================
+openai>=1.0.0                    # OpenAI API client
+langchain>=0.3.0                 # AI agent capabilities
+langchain-core>=0.3.0            # LangChain core functionality
+langchain-anthropic>=0.3.0       # Anthropic integration
+langchain-text-splitters>=0.3.0  # Text splitting utilities
+google-generativeai>=0.3.0       # Google Gemini AI integration
+# langchain-community>=0.3.0     # Community tools and integrations (optional)
 
-# Data processing and analysis
-sqlite3                   # Built-in Python module
-hashlib                   # Built-in Python module
-json                      # Built-in Python module
-csv                       # Built-in Python module
+# ============================================================================
+# DATABASE & STORAGE (REQUIRED)
+# ============================================================================
+# Note: sqlite3 is built-in Python module, no pip install needed
+pyodbc>=4.0.35                   # MSSQL connections
+pymongo>=4.3.0                   # MongoDB connections
+psycopg2-binary>=2.9.0           # PostgreSQL connections
+mysql-connector-python>=8.0.0    # MySQL connections
+aiosqlite>=0.19.0                # Async SQLite operations
 
-# Optional: For enhanced functionality
-cryptography>=3.4.0      # For enhanced security features
-keyring>=23.0.0          # For system credential storage
+# ============================================================================
+# SECURITY & ENCRYPTION (REQUIRED)
+# ============================================================================
+cryptography>=3.4.0              # Encryption and security features
+keyring>=23.0.0                  # System credential storage
+# Note: hashlib is built-in Python module, no pip install needed
+paramiko>=3.4.0                  # SSH connections and SFTP
+netmiko>=4.3.0                   # Network device automation
 
-# LangGraph and AI/ML dependencies
-langgraph>=0.2.0         # For workflow orchestration
-langchain>=0.3.0         # For AI agent capabilities
-langchain-openai>=0.2.0  # For OpenAI integration
-langchain-community>=0.3.0  # For community tools
+# ============================================================================
+# MALWARE ANALYSIS & FORENSICS (OPTIONAL - Install if needed)
+# ============================================================================
+# yara-python>=4.3.0               # Pattern matching for malware analysis
+# pefile>=2023.2.7                 # PE file analysis
+# volatility3>=2.4.0               # Memory forensics
+# capstone>=4.0.2                  # Disassembly framework
 
-# Enhancement System Dependencies
-scikit-learn>=1.3.0      # For ML-based optimization and analysis
-asyncio-mqtt>=0.16.0     # For async MQTT operations
-aiofiles>=23.2.0         # For async file operations
-aiosqlite>=0.19.0        # For async SQLite operations
+# ============================================================================
+# NETWORK & SECURITY TOOLS (REQUIRED)
+# ============================================================================
+scapy>=2.5.0                     # Network packet analysis
+# pyshark>=0.6.0                   # Wireshark integration (optional)
+# asyncio-mqtt>=0.16.0             # Async MQTT operations (optional)
 
-# Network and security tools
-scapy>=2.5.0             # For network packet analysis
-pyshark>=0.6.0           # For Wireshark integration
-paramiko>=3.4.0          # For SSH connections
-netmiko>=4.3.0            # For network device automation
+# ============================================================================
+# DATA PROCESSING & ANALYSIS (REQUIRED)
+# ============================================================================
+openpyxl>=3.1.0                  # Excel file processing
+xlrd>=2.0.1                      # Legacy Excel files
+python-docx>=1.1.0               # Word documents
+PyPDF2>=3.0.0                    # PDF processing
 
-# Data visualization
-matplotlib>=3.7.0        # For plotting and charts
-seaborn>=0.12.0          # For statistical visualizations
-plotly>=5.17.0           # For interactive visualizations
-networkx>=3.1             # For graph analysis
+# ============================================================================
+# VISUALIZATION & REPORTING (REQUIRED)
+# ============================================================================
+matplotlib>=3.7.0                # Plotting and charts
+seaborn>=0.12.0                  # Statistical visualizations
+plotly>=5.17.0                   # Interactive visualizations
+networkx>=3.1                    # Graph analysis and visualization
+vega-lite>=5.0.0                 # Declarative visualization
 
-# Web and API tools
-flask>=2.3.0             # For web applications
-fastapi>=0.104.0         # For API development
-uvicorn>=0.24.0          # For ASGI server
-aiohttp>=3.9.0           # For async HTTP requests
+# ============================================================================
+# CLOUD & INFRASTRUCTURE (REQUIRED)
+# ============================================================================
+boto3>=1.34.0                    # AWS integration
+azure-mgmt-resource>=23.0.0      # Azure integration
+google-cloud-resource-manager>=1.10.0  # GCP integration
 
-# File processing
-openpyxl>=3.1.0          # For Excel file processing
-xlrd>=2.0.1              # For legacy Excel files
-python-docx>=1.1.0       # For Word documents
-PyPDF2>=3.0.0            # For PDF processing
+# ============================================================================
+# MONITORING & LOGGING (REQUIRED)
+# ============================================================================
+prometheus-client>=0.19.0        # Metrics collection
+structlog>=23.2.0                # Structured logging
+colorama>=0.4.6                  # Colored terminal output
 
-# Cloud and infrastructure
-boto3>=1.34.0            # For AWS integration
-azure-mgmt-resource>=23.0.0  # For Azure integration
-google-cloud-resource-manager>=1.10.0  # For GCP integration
+# ============================================================================
+# ACTIVE DIRECTORY & LDAP (REQUIRED)
+# ============================================================================
+ldap3>=2.9.0                     # Modern LDAP library (recommended)
+python-ldap>=3.4.0               # Alternative LDAP library
 
-# Monitoring and logging
-prometheus-client>=0.19.0  # For metrics collection
-structlog>=23.2.0         # For structured logging
-colorama>=0.4.6           # For colored terminal output
+# ============================================================================
+# MACHINE LEARNING & NLP (REQUIRED)
+# ============================================================================
+scikit-learn>=1.3.0              # Machine learning algorithms
+spacy>=3.7.0                     # NLP processing engine
 
-# Development and testing
-pytest>=7.4.0            # For testing
-black>=23.11.0            # For code formatting
-flake8>=6.1.0             # For linting
-mypy>=1.7.0               # For type checking
+# ============================================================================
+# DEVELOPMENT & TESTING (OPTIONAL - Comment out for production)
+# ============================================================================
+pytest>=7.4.0                    # Testing framework
+black>=23.11.0                   # Code formatting
+flake8>=6.1.0                    # Linting
+mypy>=1.7.0                      # Type checking
 
-# Additional utilities
-click>=8.1.0              # For CLI applications
-rich>=13.7.0              # For rich terminal output
-tqdm>=4.66.0              # For progress bars
-pyyaml>=6.0.1             # For YAML processing
-toml>=0.10.2              # For TOML configuration files
+# ============================================================================
+# ENHANCED FEATURES (OPTIONAL - Comment out to disable)
+# ============================================================================
+# Advanced ML and Analytics
+scipy>=1.10.0                    # Scientific computing
+scikit-optimize>=0.9.0           # Hyperparameter optimization
+optuna>=3.0.0                    # Automated hyperparameter optimization
+
+# Advanced NLP
+transformers>=4.30.0             # Hugging Face transformers
+torch>=2.0.0                     # PyTorch for deep learning
+sentence-transformers>=2.2.0     # Sentence embeddings
+
+# Advanced Data Processing
+dask>=2023.0.0                   # Parallel computing
+vaex>=4.15.0                     # Big data processing
+polars>=0.19.0                   # Fast DataFrame library
+
+# Advanced Security Tools (moved to required section above)
+# volatility3>=2.4.0               # Memory forensics
+# yara-python>=4.3.0               # Pattern matching
+# pefile>=2023.2.7                 # PE file analysis
+# capstone>=4.0.2                  # Disassembly framework
+
+# Advanced Network Analysis
+dpkt>=1.9.8                      # Packet parsing
+pypcap>=1.2.3                    # Packet capture
+scapy-http>=1.8.2                # HTTP packet analysis
+
+# Advanced Visualization
+bokeh>=3.0.0                     # Interactive web plots
+altair>=5.0.0                    # Declarative visualization
+holoviews>=1.17.0                # High-level plotting
+
+# Advanced Cloud Features
+kubernetes>=26.1.0               # Kubernetes integration
+docker>=6.1.0                    # Docker integration
+terraform>=0.1.0                 # Infrastructure as code
+
+# Advanced Monitoring
+grafana-api>=1.0.3               # Grafana integration
+elasticsearch>=8.0.0             # Elasticsearch integration
+kibana>=8.0.0                    # Kibana integration
+
+# Advanced SIEM Integration
+qradar>=1.0.0                    # IBM QRadar integration
+splunk-sdk>=1.7.0                # Splunk integration
+exabeam>=1.0.0                   # Exabeam integration
+
+# ============================================================================
+# PERFORMANCE OPTIMIZATION (RECOMMENDED)
+# ============================================================================
+numba>=0.57.0                    # JIT compilation for performance
+cython>=3.0.0                    # C extensions for Python
+mypy-extensions>=1.0.0           # Type checking extensions
+
+# ============================================================================
+# NODE.JS DEPENDENCIES (for Session Viewer)
+# ============================================================================
+# The session viewer requires Node.js dependencies. Install with:
+#   cd session-viewer && npm install
+#   cd session-viewer/client && npm install
+#
+# Required Node.js packages (automatically installed with npm install):
+#   - express, cors, helmet, compression, morgan
+#   - fs-extra, chokidar, socket.io, sqlite3
+#   - react, react-dom, react-router-dom, axios
+#   - react-markdown, react-syntax-highlighter, recharts
+#   - lucide-react, clsx, tailwind-merge, framer-motion
+#   - react-query, react-hot-toast, tailwindcss
+
+# ============================================================================
+# DEPENDENCY NOTES
+# ============================================================================
+# 
+# PYTHON INSTALLATION:
+#   pip install -r requirements.txt
+#
+# MINIMAL PYTHON INSTALLATION (Core features only):
+#   pip install pandas numpy requests python-dotenv cryptography openai
+#   pip install langchain langchain-core langchain-anthropic aiohttp aiofiles
+#   pip install matplotlib seaborn networkx scapy
+#
+# FULL PYTHON INSTALLATION WITH OPTIONAL FEATURES:
+#   pip install -r requirements.txt
+#
+# NODE.JS INSTALLATION (for Session Viewer):
+#   cd session-viewer && npm install
+#   cd session-viewer/client && npm install
+#
+# VERIFICATION:
+#   python -c "import pandas, numpy, cryptography, langchain, openai; print('✅ Core Python dependencies installed')"
+#   cd session-viewer && node -e "console.log('✅ Node.js dependencies installed')"
+#
+# TROUBLESHOOTING:
+#   - Some packages may require system dependencies (e.g., libldap2-dev, libyara-dev)
+#   - GPU packages (torch) may need CUDA-specific versions
+#   - Network tools may require elevated privileges
+#   - YARA rules may need to be installed separately
+#   - Volatility3 may require additional plugins
+#
+# ============================================================================

@@ -46,6 +46,12 @@ class SessionEventType(Enum):
     FILE_OPERATION = "file_operation"
     ERROR_OCCURRED = "error_occurred"
     SYSTEM_EVENT = "system_event"
+    
+    def __str__(self):
+        return self.value
+    
+    def __repr__(self):
+        return self.value
 
 @dataclass
 class SessionEvent:
@@ -148,12 +154,14 @@ class SessionLogger:
         
         self.logger = logging.getLogger(f"session_{self.session_id[:8]}")
     
-    def log_event(self, event_type: SessionEventType, input_data: Dict[str, Any] = None,
-                  output_data: Dict[str, Any] = None, metadata: Dict[str, Any] = None,
-                  error_info: Dict[str, Any] = None, duration_ms: float = None,
-                  context: Dict[str, Any] = None, tags: List[str] = None) -> str:
-        """Log a session event."""
+    def log_event(self, event_type: SessionEventType, input_data: Dict[str, Any] = None, 
+                  output_data: Dict[str, Any] = None, metadata: Dict[str, Any] = None, 
+                  error_info: Dict[str, Any] = None, tags: List[str] = None, 
+                  duration_ms: float = None, memory_usage: Dict[str, Any] = None,
+                  context: Dict[str, Any] = None):
+        """Log a session event with comprehensive information."""
         try:
+            # Create event
             event = SessionEvent(
                 event_id=str(uuid.uuid4()),
                 event_type=event_type,
@@ -161,25 +169,20 @@ class SessionLogger:
                 session_id=self.session_id,
                 user_id=self.user_id,
                 agent_id=self.agent_id,
-                workflow_id=self.current_workflow,
-                step_id=self.current_step,
-                input_data=input_data,
-                output_data=output_data,
-                metadata=metadata,
-                error_info=error_info,
+                input_data=input_data or {},
+                output_data=output_data or {},
+                metadata=metadata or {},
+                error_info=error_info or {},
                 duration_ms=duration_ms,
-                memory_usage=self._get_memory_usage(),
-                context=context,
+                memory_usage=memory_usage or {},
+                context=context or {},
                 tags=tags or []
             )
             
             # Add to events list
             self.events.append(event)
             
-            # Log to file
-            self._write_event_to_file(event)
-            
-            # Update counters
+            # Update counters based on event type
             if event_type == SessionEventType.LLM_CALL:
                 self.llm_calls += 1
             elif event_type == SessionEventType.TOOL_EXECUTION:
@@ -187,18 +190,29 @@ class SessionLogger:
             elif event_type == SessionEventType.ERROR_OCCURRED:
                 self.errors += 1
             
+            # Write to log file
+            self._write_event_to_file(event)
+            
             return event.event_id
             
         except Exception as e:
             print(f"❌ Error logging event: {e}")
-            return ""
-    
+            return None
+
     def _write_event_to_file(self, event: SessionEvent):
-        """Write event to JSON log file."""
+        """Write event to log file with proper JSON serialization."""
         try:
-            log_file = self.session_log_dir / "events.jsonl"
+            # Convert event to dict with proper enum handling
+            event_dict = asdict(event)
+            # Convert enum to string for JSON serialization
+            event_dict['event_type'] = str(event.event_type)
+            
+            # Write to log file
+            log_file = self.session_log_dir / "session_events.jsonl"
             with open(log_file, 'a', encoding='utf-8') as f:
-                f.write(json.dumps(asdict(event), ensure_ascii=False) + '\n')
+                json.dump(event_dict, f, ensure_ascii=False, default=str)
+                f.write('\n')
+                
         except Exception as e:
             print(f"❌ Error writing event to file: {e}")
     
@@ -216,14 +230,137 @@ class SessionLogger:
         except ImportError:
             return {'error': 'psutil not available'}
     
-    def log_user_input(self, user_input: str, context: Dict[str, Any] = None):
-        """Log user input."""
-        return self.log_event(
-            SessionEventType.USER_INPUT,
-            input_data={'user_input': user_input},
-            context=context,
-            tags=['user_interaction', 'input']
-        )
+    def log_user_input(self, user_input: str, context: str = "general", metadata: Dict[str, Any] = None):
+        """Log user input with context and metadata."""
+        try:
+            self.log_event(
+                SessionEventType.USER_INPUT,
+                input_data={"user_input": user_input, "context": context},
+                metadata=metadata or {},
+                tags=["user_input", context]
+            )
+        except Exception as e:
+            print(f"Warning: Failed to log user input: {e}")
+
+    def log_memory_operation(self, operation_type: str, details: str, metadata: Dict[str, Any] = None):
+        """Log memory operations with details and metadata."""
+        try:
+            self.log_event(
+                SessionEventType.MEMORY_OPERATION,
+                input_data={"operation_type": operation_type, "details": details},
+                metadata=metadata or {},
+                tags=["memory", operation_type]
+            )
+        except Exception as e:
+            print(f"Warning: Failed to log memory operation: {e}")
+
+    def log_workflow_execution(self, workflow_type: str = None, step_name: str = None, details: str = None, 
+                              metadata: Dict[str, Any] = None, **kwargs):
+        """Log workflow execution steps with details and metadata.
+        
+        Supports both old and new signatures:
+        - New: log_workflow_execution(workflow_type, step_name, details, metadata)
+        - Old: log_workflow_execution(workflow_id, step_id, action, input_data, metadata)
+        """
+        try:
+            # Handle old signature with workflow_id, step_id, action, input_data
+            if 'workflow_id' in kwargs:
+                workflow_type = kwargs.get('workflow_id', workflow_type)
+            if 'step_id' in kwargs:
+                step_name = kwargs.get('step_id', step_name)
+            if 'action' in kwargs:
+                details = kwargs.get('action', details)
+            if 'input_data' in kwargs:
+                # Merge input_data into metadata
+                if metadata is None:
+                    metadata = {}
+                metadata.update(kwargs.get('input_data', {}))
+            
+            # Ensure we have the required parameters
+            workflow_type = workflow_type or "unknown"
+            step_name = step_name or "unknown"
+            details = details or "workflow execution step"
+            
+            self.log_event(
+                SessionEventType.WORKFLOW_STEP,
+                input_data={"workflow_type": workflow_type, "step_name": step_name, "details": details},
+                metadata=metadata or {},
+                tags=["workflow", workflow_type, step_name]
+            )
+        except Exception as e:
+            print(f"Warning: Failed to log workflow execution: {e}")
+
+    def log_agent_start(self, agent_id: str, session_id: str, metadata: Dict[str, Any] = None):
+        """Log agent start with session information."""
+        try:
+            self.log_event(
+                SessionEventType.AGENT_START,
+                input_data={"agent_id": agent_id, "session_id": session_id},
+                metadata=metadata or {},
+                tags=["agent_start", "session"]
+            )
+        except Exception as e:
+            print(f"Warning: Failed to log agent start: {e}")
+
+    def start_session(self):
+        """Start a new session."""
+        try:
+            self.log_event(
+                SessionEventType.SYSTEM_EVENT,
+                input_data={"action": "session_start"},
+                metadata={"session_name": self.session_name},
+                tags=["session_start", "system"]
+            )
+        except Exception as e:
+            print(f"Warning: Failed to start session: {e}")
+
+    def end_session(self, summary: Dict[str, Any]):
+        """End the current session with summary."""
+        try:
+            self.log_event(
+                SessionEventType.AGENT_END,
+                input_data={"action": "session_end", "summary": summary},
+                metadata={"session_name": self.session_name},
+                tags=["session_end", "system"]
+            )
+            
+            # Save session summary
+            summary_path = self.session_log_dir / "session_summary.json"
+            with open(summary_path, 'w', encoding='utf-8') as f:
+                json.dump(summary, f, indent=2, ensure_ascii=False, default=str)
+            
+            print(f"📝 Session ended: {self.session_name}")
+            print(f"   Summary saved: {summary_path}")
+            
+        except Exception as e:
+            print(f"Warning: Failed to end session: {e}")
+
+    def finalize_session(self) -> str:
+        """Finalize session and save summary."""
+        try:
+            # Generate and save summary
+            summary = self.generate_session_summary()
+            summary_path = self.session_log_dir / "session_summary.json"
+            
+            with open(summary_path, 'w', encoding='utf-8') as f:
+                json.dump(summary, f, indent=2, ensure_ascii=False, default=str)
+            
+            # Save summary to output directory as well
+            self.save_output_file("session_summary.json", summary, "json")
+            
+            print(f"📝 Session finalized: {self.session_name}")
+            print(f"   Total events: {len(self.events)}")
+            print(f"   LLM calls: {self.llm_calls}")
+            print(f"   Tool executions: {self.tool_executions}")
+            print(f"   Errors: {self.errors}")
+            print(f"   Duration: {summary['total_duration_seconds']:.2f}s")
+            print(f"   Summary: {summary_path}")
+            
+            return str(summary_path)
+            
+        except Exception as e:
+            print(f"❌ Error finalizing session: {e}")
+            return ""
     
     def log_llm_call(self, prompt: str, model: str = None, parameters: Dict[str, Any] = None,
                      response: str = None, duration_ms: float = None, tokens_used: Dict[str, int] = None):
@@ -444,39 +581,9 @@ class SessionLogger:
         
         return summary
     
-    def finalize_session(self) -> str:
-        """Finalize session and save summary."""
-        try:
-            # Log session end
-            self.log_event(
-                SessionEventType.AGENT_END,
-                metadata={'total_events': len(self.events)},
-                tags=['session_end', 'system']
-            )
-            
-            # Generate and save summary
-            summary = self.generate_session_summary()
-            summary_path = self.session_log_dir / "session_summary.json"
-            
-            with open(summary_path, 'w', encoding='utf-8') as f:
-                json.dump(summary, f, indent=2, ensure_ascii=False)
-            
-            # Save summary to output directory as well
-            self.save_output_file("session_summary.json", summary, "json")
-            
-            print(f"📝 Session finalized: {self.session_name}")
-            print(f"   Total events: {len(self.events)}")
-            print(f"   LLM calls: {self.llm_calls}")
-            print(f"   Tool executions: {self.tool_executions}")
-            print(f"   Errors: {self.errors}")
-            print(f"   Duration: {summary['total_duration_seconds']:.2f}s")
-            print(f"   Summary: {summary_path}")
-            
-            return str(summary_path)
-            
-        except Exception as e:
-            print(f"❌ Error finalizing session: {e}")
-            return ""
+    def get_session_summary(self) -> Dict[str, Any]:
+        """Get a summary of the current session."""
+        return self.generate_session_summary()
 
 # Context manager for automatic session management
 class SessionContext:

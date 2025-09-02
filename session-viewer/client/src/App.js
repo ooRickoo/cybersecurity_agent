@@ -8,7 +8,7 @@ import io from 'socket.io-client';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
-import SessionViewer from './components/SessionViewer';
+import SessionDetail from './components/SessionDetail';
 import FileViewer from './components/FileViewer';
 import StatusBar from './components/StatusBar';
 
@@ -32,6 +32,7 @@ const queryClient = new QueryClient({
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
 
@@ -58,6 +59,13 @@ function App() {
     });
 
     setSocket(newSocket);
+
+    // Hide loading screen when React app is ready
+    if (window.hideLoadingScreen) {
+      setTimeout(() => {
+        window.hideLoadingScreen();
+      }, 100);
+    }
 
     // Cleanup on unmount
     return () => {
@@ -102,6 +110,7 @@ function App() {
                   isOpen={sidebarOpen} 
                   onClose={() => setSidebarOpen(false)}
                   isConnected={isConnected}
+                  collapsed={sidebarCollapsed}
                 />
 
                 {/* Main Content Area */}
@@ -110,6 +119,8 @@ function App() {
                   <Header 
                     onMenuClick={() => setSidebarOpen(true)}
                     isConnected={isConnected}
+                    sidebarOpen={sidebarOpen}
+                    onSidebarToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
                   />
 
                   {/* Main Content */}
@@ -120,8 +131,8 @@ function App() {
                         element={<Dashboard onRouteChange={handleRouteChange} />} 
                       />
                       <Route 
-                        path="/sessions/:sessionId" 
-                        element={<SessionViewer onRouteChange={handleRouteChange} />} 
+                        path="/session/:sessionId" 
+                        element={<SessionDetail onRouteChange={handleRouteChange} />} 
                       />
                       <Route 
                         path="/files/:filePath" 

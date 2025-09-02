@@ -331,6 +331,24 @@ class SessionViewerManager:
                 'message': f'Session extended by {self.shutdown_delay // 60} minutes'
             }
     
+    def keep_alive(self):
+        """Keep the session viewer running and handle user interruption."""
+        try:
+            print("🔄 Session viewer is running...")
+            print("   Press Ctrl+C to stop the viewer")
+            
+            # Keep the process running until interrupted
+            while self.is_running and self.server_process and self.server_process.poll() is None:
+                time.sleep(1)
+                
+        except KeyboardInterrupt:
+            print("\n🛑 Stopping session viewer...")
+            self.stop_viewer()
+            print("✅ Session viewer stopped.")
+        except Exception as e:
+            print(f"❌ Error in keep_alive: {e}")
+            self.stop_viewer()
+    
     def cleanup(self):
         """Cleanup resources."""
         self.stop_viewer()

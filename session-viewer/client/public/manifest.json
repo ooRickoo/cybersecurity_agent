@@ -1,0 +1,10 @@
+{
+  "short_name": "CS Agent Viewer",
+  "name": "Cybersecurity Agent Session Viewer",
+  "description": "Professional interface for monitoring and analyzing cybersecurity workflow outputs",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#0a0a0a"
+}

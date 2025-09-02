@@ -13,7 +13,7 @@ import {
   Archive
 } from 'lucide-react';
 
-const Sidebar = ({ isOpen, onClose, isConnected }) => {
+const Sidebar = ({ isOpen, onClose, isConnected, collapsed = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -75,9 +75,10 @@ const Sidebar = ({ isOpen, onClose, isConnected }) => {
 
       {/* Sidebar */}
       <div className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-cyber-light/95 backdrop-blur-md border-r border-cyber-accent/20
-        transform transition-transform duration-300 ease-in-out lg:translate-x-0
+        fixed inset-y-0 left-0 z-50 bg-cyber-light/95 backdrop-blur-md border-r border-cyber-accent/20
+        transform transition-all duration-300 ease-in-out lg:translate-x-0
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        ${collapsed ? 'w-16' : 'w-64'}
       `}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-cyber-accent/20">
@@ -85,10 +86,12 @@ const Sidebar = ({ isOpen, onClose, isConnected }) => {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyber-accent to-cyber-accent3 flex items-center justify-center">
               <Shield size={20} className="text-cyber-dark" />
             </div>
-            <div>
-              <h1 className="text-lg font-bold cyber-gradient-text">Cybersecurity Agent</h1>
-              <p className="text-xs text-cyber-accent/70">Session Viewer</p>
-            </div>
+            {!collapsed && (
+              <div>
+                <h1 className="text-lg font-bold cyber-gradient-text">Cybersecurity Agent</h1>
+                <p className="text-xs text-cyber-accent/70">Session Viewer</p>
+              </div>
+            )}
           </div>
           <button
             onClick={onClose}
@@ -100,9 +103,11 @@ const Sidebar = ({ isOpen, onClose, isConnected }) => {
 
         {/* Navigation */}
         <nav className="p-4 space-y-2">
-          <div className="text-xs font-semibold text-cyber-accent/50 uppercase tracking-wider mb-3">
-            Navigation
-          </div>
+          {!collapsed && (
+            <div className="text-xs font-semibold text-cyber-accent/50 uppercase tracking-wider mb-3">
+              Navigation
+            </div>
+          )}
           
           {navigationItems.map((item) => {
             const Icon = item.icon;
@@ -118,13 +123,17 @@ const Sidebar = ({ isOpen, onClose, isConnected }) => {
                     ? 'bg-cyber-accent/20 text-cyber-accent border border-cyber-accent/30' 
                     : 'text-cyber-accent/70 hover:text-cyber-accent hover:bg-cyber-light/40'
                   }
+                  ${collapsed ? 'justify-center' : ''}
                 `}
+                title={collapsed ? item.name : undefined}
               >
                 <Icon size={18} />
-                <div className="flex-1">
-                  <div className="font-medium">{item.name}</div>
-                  <div className="text-xs opacity-70">{item.description}</div>
-                </div>
+                {!collapsed && (
+                  <div className="flex-1">
+                    <div className="font-medium">{item.name}</div>
+                    <div className="text-xs opacity-70">{item.description}</div>
+                  </div>
+                )}
               </button>
             );
           })}
@@ -132,9 +141,11 @@ const Sidebar = ({ isOpen, onClose, isConnected }) => {
 
         {/* File Types */}
         <div className="p-4 border-t border-cyber-accent/20">
-          <div className="text-xs font-semibold text-cyber-accent/50 uppercase tracking-wider mb-3">
-            File Types
-          </div>
+          {!collapsed && (
+            <div className="text-xs font-semibold text-cyber-accent/50 uppercase tracking-wider mb-3">
+              File Types
+            </div>
+          )}
           
           <div className="space-y-2">
             {fileTypeItems.map((item) => {
@@ -143,13 +154,20 @@ const Sidebar = ({ isOpen, onClose, isConnected }) => {
               return (
                 <div
                   key={item.name}
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-cyber-light/40 transition-colors duration-200 cursor-pointer"
+                  className={`flex items-center gap-3 p-2 rounded-lg hover:bg-cyber-light/40 transition-colors duration-200 cursor-pointer ${
+                    collapsed ? 'justify-center' : ''
+                  }`}
+                  title={collapsed ? item.name : undefined}
                 >
                   <div className={`w-6 h-6 rounded bg-gradient-to-br ${item.color} flex items-center justify-center`}>
                     <Icon size={12} className="text-white" />
                   </div>
-                  <div className="flex-1 text-sm text-cyber-accent/70">{item.name}</div>
-                  <div className="text-xs text-cyber-accent/50">{item.count}</div>
+                  {!collapsed && (
+                    <>
+                      <div className="flex-1 text-sm text-cyber-accent/70">{item.name}</div>
+                      <div className="text-xs text-cyber-accent/50">{item.count}</div>
+                    </>
+                  )}
                 </div>
               );
             })}

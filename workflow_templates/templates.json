@@ -1,0 +1,870 @@
+{
+  "patent_analysis_v1": {
+    "template_id": "patent_analysis_v1",
+    "name": "Patent Analysis Workflow",
+    "description": "Comprehensive patent analysis with LLM insights",
+    "category": "research",
+    "complexity": "moderate",
+    "steps": [
+      {
+        "step_id": "import_patents",
+        "name": "Import Patent Data",
+        "description": "Import patent data from CSV file",
+        "tool_name": "csv_reader",
+        "tool_category": "data_processing",
+        "parameters": {},
+        "dependencies": [],
+        "estimated_duration": 5.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "fetch_patent_details",
+        "name": "Fetch Patent Details",
+        "description": "Fetch detailed patent information from USPTO",
+        "tool_name": "patent_lookup",
+        "tool_category": "api",
+        "parameters": {},
+        "dependencies": [
+          "import_patents"
+        ],
+        "estimated_duration": 30.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "generate_insights",
+        "name": "Generate LLM Insights",
+        "description": "Generate value propositions and categories using LLM",
+        "tool_name": "ai_patent_analysis",
+        "tool_category": "ai",
+        "parameters": {},
+        "dependencies": [
+          "fetch_patent_details"
+        ],
+        "estimated_duration": 15.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "export_results",
+        "name": "Export Results",
+        "description": "Export enhanced patent data to CSV",
+        "tool_name": "csv_writer",
+        "tool_category": "data_processing",
+        "parameters": {},
+        "dependencies": [
+          "generate_insights"
+        ],
+        "estimated_duration": 5.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      }
+    ],
+    "execution_mode": "sequential",
+    "required_tools": [
+      "csv_reader",
+      "patent_lookup",
+      "ai_patent_analysis",
+      "csv_writer"
+    ],
+    "required_inputs": [
+      "patent_csv_file"
+    ],
+    "expected_outputs": [
+      "enhanced_patent_csv",
+      "analysis_summary"
+    ],
+    "tags": [
+      "patent",
+      "analysis",
+      "research",
+      "llm"
+    ],
+    "version": "1.0",
+    "created_at": 1756777735.535862,
+    "last_modified": 1756777735.535862,
+    "usage_count": 0,
+    "success_rate": 0.0,
+    "avg_execution_time": 0.0,
+    "adaptation_rules": [],
+    "optimization_hints": {}
+  },
+  "malware_analysis_v1": {
+    "template_id": "malware_analysis_v1",
+    "name": "Malware Analysis Workflow",
+    "description": "Comprehensive malware analysis and threat assessment",
+    "category": "investigation",
+    "complexity": "expert",
+    "steps": [
+      {
+        "step_id": "file_analysis",
+        "name": "File Analysis",
+        "description": "Analyze file properties and metadata",
+        "tool_name": "file_analyzer",
+        "tool_category": "forensics",
+        "parameters": {},
+        "dependencies": [],
+        "estimated_duration": 10.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "malware_detection",
+        "name": "Malware Detection",
+        "description": "Detect malware using signatures and heuristics",
+        "tool_name": "malware_analyzer",
+        "tool_category": "security",
+        "parameters": {},
+        "dependencies": [
+          "file_analysis"
+        ],
+        "estimated_duration": 20.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "behavioral_analysis",
+        "name": "Behavioral Analysis",
+        "description": "Analyze malware behavior patterns",
+        "tool_name": "behavior_analyzer",
+        "tool_category": "security",
+        "parameters": {},
+        "dependencies": [
+          "malware_detection"
+        ],
+        "estimated_duration": 25.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "threat_assessment",
+        "name": "Threat Assessment",
+        "description": "Assess threat level and impact",
+        "tool_name": "threat_assessor",
+        "tool_category": "security",
+        "parameters": {},
+        "dependencies": [
+          "behavioral_analysis"
+        ],
+        "estimated_duration": 15.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "generate_report",
+        "name": "Generate Report",
+        "description": "Generate comprehensive malware analysis report",
+        "tool_name": "report_generator",
+        "tool_category": "reporting",
+        "parameters": {},
+        "dependencies": [
+          "threat_assessment"
+        ],
+        "estimated_duration": 10.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      }
+    ],
+    "execution_mode": "sequential",
+    "required_tools": [
+      "file_analyzer",
+      "malware_analyzer",
+      "behavior_analyzer",
+      "threat_assessor",
+      "report_generator"
+    ],
+    "required_inputs": [
+      "suspicious_file"
+    ],
+    "expected_outputs": [
+      "malware_report",
+      "threat_assessment"
+    ],
+    "tags": [
+      "malware",
+      "analysis",
+      "security",
+      "forensics"
+    ],
+    "version": "1.0",
+    "created_at": 1756777735.5358741,
+    "last_modified": 1756777735.5358741,
+    "usage_count": 0,
+    "success_rate": 0.0,
+    "avg_execution_time": 0.0,
+    "adaptation_rules": [],
+    "optimization_hints": {}
+  },
+  "network_analysis_v1": {
+    "template_id": "network_analysis_v1",
+    "name": "Network Analysis Workflow",
+    "description": "Comprehensive network traffic analysis",
+    "category": "investigation",
+    "complexity": "complex",
+    "steps": [
+      {
+        "step_id": "pcap_analysis",
+        "name": "PCAP Analysis",
+        "description": "Analyze PCAP file for traffic patterns",
+        "tool_name": "pcap_analyzer",
+        "tool_category": "network",
+        "parameters": {},
+        "dependencies": [],
+        "estimated_duration": 20.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "protocol_analysis",
+        "name": "Protocol Analysis",
+        "description": "Analyze network protocols and services",
+        "tool_name": "protocol_analyzer",
+        "tool_category": "network",
+        "parameters": {},
+        "dependencies": [
+          "pcap_analysis"
+        ],
+        "estimated_duration": 15.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "security_indicators",
+        "name": "Security Indicators",
+        "description": "Detect security indicators and anomalies",
+        "tool_name": "threat_detector",
+        "tool_category": "security",
+        "parameters": {},
+        "dependencies": [
+          "protocol_analysis"
+        ],
+        "estimated_duration": 10.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "traffic_visualization",
+        "name": "Traffic Visualization",
+        "description": "Create traffic visualizations",
+        "tool_name": "chart_generator",
+        "tool_category": "visualization",
+        "parameters": {},
+        "dependencies": [
+          "security_indicators"
+        ],
+        "estimated_duration": 15.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "generate_report",
+        "name": "Generate Report",
+        "description": "Generate network analysis report",
+        "tool_name": "report_generator",
+        "tool_category": "reporting",
+        "parameters": {},
+        "dependencies": [
+          "traffic_visualization"
+        ],
+        "estimated_duration": 10.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      }
+    ],
+    "execution_mode": "sequential",
+    "required_tools": [
+      "pcap_analyzer",
+      "protocol_analyzer",
+      "threat_detector",
+      "chart_generator",
+      "report_generator"
+    ],
+    "required_inputs": [
+      "pcap_file"
+    ],
+    "expected_outputs": [
+      "network_report",
+      "traffic_stats",
+      "security_indicators"
+    ],
+    "tags": [
+      "network",
+      "analysis",
+      "traffic",
+      "security"
+    ],
+    "version": "1.0",
+    "created_at": 1756777735.535882,
+    "last_modified": 1756777735.535882,
+    "usage_count": 0,
+    "success_rate": 0.0,
+    "avg_execution_time": 0.0,
+    "adaptation_rules": [],
+    "optimization_hints": {}
+  },
+  "dynamic_1756777122_a9da660c": {
+    "template_id": "dynamic_1756777122_a9da660c",
+    "name": "Dynamic Workflow - Custom analysis workflow...",
+    "description": "Dynamically generated workflow for: Custom analysis workflow",
+    "category": "analysis",
+    "complexity": "moderate",
+    "steps": [
+      {
+        "step_id": "step_1",
+        "name": "Report Generation",
+        "description": "Generate comprehensive reports",
+        "tool_name": "report_generator",
+        "tool_category": "reporting",
+        "parameters": {},
+        "dependencies": [],
+        "estimated_duration": 15.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "step_2",
+        "name": "Pattern Analysis",
+        "description": "Analyze patterns in data",
+        "tool_name": "pattern_detector",
+        "tool_category": "analysis",
+        "parameters": {},
+        "dependencies": [
+          "step_1"
+        ],
+        "estimated_duration": 20.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "step_3",
+        "name": "Data Import",
+        "description": "Import data from various sources",
+        "tool_name": "file_reader",
+        "tool_category": "data_processing",
+        "parameters": {},
+        "dependencies": [
+          "step_2"
+        ],
+        "estimated_duration": 5.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      }
+    ],
+    "execution_mode": "sequential",
+    "required_tools": [
+      "file_reader",
+      "report_generator",
+      "pattern_detector"
+    ],
+    "required_inputs": "Custom analysis workflow for testing",
+    "expected_outputs": [
+      "file_analysis",
+      "network_analysis"
+    ],
+    "tags": [
+      "file",
+      "import",
+      "data",
+      "analysis",
+      "statistics",
+      "documentation",
+      "pattern",
+      "reporting"
+    ],
+    "version": "1.0",
+    "created_at": 1756777122.5219688,
+    "last_modified": 1756777122.5219688,
+    "usage_count": 0,
+    "success_rate": 0.0,
+    "avg_execution_time": 0.0,
+    "adaptation_rules": [],
+    "optimization_hints": {}
+  },
+  "dynamic_1756777283_adf7ac63": {
+    "template_id": "dynamic_1756777283_adf7ac63",
+    "name": "Dynamic Workflow - Custom analysis workflow...",
+    "description": "Dynamically generated workflow for: Custom analysis workflow",
+    "category": "analysis",
+    "complexity": "moderate",
+    "steps": [
+      {
+        "step_id": "step_1",
+        "name": "Report Generation",
+        "description": "Generate comprehensive reports",
+        "tool_name": "report_generator",
+        "tool_category": "reporting",
+        "parameters": {},
+        "dependencies": [],
+        "estimated_duration": 15.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "step_2",
+        "name": "Pattern Analysis",
+        "description": "Analyze patterns in data",
+        "tool_name": "pattern_detector",
+        "tool_category": "analysis",
+        "parameters": {},
+        "dependencies": [
+          "step_1"
+        ],
+        "estimated_duration": 20.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "step_3",
+        "name": "Data Import",
+        "description": "Import data from various sources",
+        "tool_name": "file_reader",
+        "tool_category": "data_processing",
+        "parameters": {},
+        "dependencies": [
+          "step_2"
+        ],
+        "estimated_duration": 5.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      }
+    ],
+    "execution_mode": "sequential",
+    "required_tools": [
+      "file_reader",
+      "pattern_detector",
+      "report_generator"
+    ],
+    "required_inputs": "Custom analysis workflow for testing",
+    "expected_outputs": [
+      "file_analysis",
+      "network_analysis"
+    ],
+    "tags": [
+      "statistics",
+      "documentation",
+      "reporting",
+      "file",
+      "import",
+      "analysis",
+      "pattern",
+      "data"
+    ],
+    "version": "1.0",
+    "created_at": 1756777283.9856231,
+    "last_modified": 1756777283.9856231,
+    "usage_count": 0,
+    "success_rate": 0.0,
+    "avg_execution_time": 0.0,
+    "adaptation_rules": [],
+    "optimization_hints": {}
+  },
+  "dynamic_1756777409_7a2df007": {
+    "template_id": "dynamic_1756777409_7a2df007",
+    "name": "Dynamic Workflow - Custom analysis workflow...",
+    "description": "Dynamically generated workflow for: Custom analysis workflow",
+    "category": "analysis",
+    "complexity": "moderate",
+    "steps": [
+      {
+        "step_id": "step_1",
+        "name": "Report Generation",
+        "description": "Generate comprehensive reports",
+        "tool_name": "report_generator",
+        "tool_category": "reporting",
+        "parameters": {},
+        "dependencies": [],
+        "estimated_duration": 15.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "step_2",
+        "name": "Pattern Analysis",
+        "description": "Analyze patterns in data",
+        "tool_name": "pattern_detector",
+        "tool_category": "analysis",
+        "parameters": {},
+        "dependencies": [
+          "step_1"
+        ],
+        "estimated_duration": 20.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "step_3",
+        "name": "Data Import",
+        "description": "Import data from various sources",
+        "tool_name": "file_reader",
+        "tool_category": "data_processing",
+        "parameters": {},
+        "dependencies": [
+          "step_2"
+        ],
+        "estimated_duration": 5.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      }
+    ],
+    "execution_mode": "sequential",
+    "required_tools": [
+      "file_reader",
+      "pattern_detector",
+      "report_generator"
+    ],
+    "required_inputs": "Custom analysis workflow for testing",
+    "expected_outputs": [
+      "file_analysis",
+      "network_analysis"
+    ],
+    "tags": [
+      "pattern",
+      "analysis",
+      "documentation",
+      "file",
+      "data",
+      "statistics",
+      "import",
+      "reporting"
+    ],
+    "version": "1.0",
+    "created_at": 1756777409.583797,
+    "last_modified": 1756777409.583797,
+    "usage_count": 0,
+    "success_rate": 0.0,
+    "avg_execution_time": 0.0,
+    "adaptation_rules": [],
+    "optimization_hints": {}
+  },
+  "dynamic_1756777538_6e70e253": {
+    "template_id": "dynamic_1756777538_6e70e253",
+    "name": "Dynamic Workflow - Custom analysis workflow...",
+    "description": "Dynamically generated workflow for: Custom analysis workflow",
+    "category": "analysis",
+    "complexity": "moderate",
+    "steps": [
+      {
+        "step_id": "step_1",
+        "name": "Report Generation",
+        "description": "Generate comprehensive reports",
+        "tool_name": "report_generator",
+        "tool_category": "reporting",
+        "parameters": {},
+        "dependencies": [],
+        "estimated_duration": 15.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "step_2",
+        "name": "Data Import",
+        "description": "Import data from various sources",
+        "tool_name": "file_reader",
+        "tool_category": "data_processing",
+        "parameters": {},
+        "dependencies": [
+          "step_1"
+        ],
+        "estimated_duration": 5.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "step_3",
+        "name": "Pattern Analysis",
+        "description": "Analyze patterns in data",
+        "tool_name": "pattern_detector",
+        "tool_category": "analysis",
+        "parameters": {},
+        "dependencies": [
+          "step_2"
+        ],
+        "estimated_duration": 20.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      }
+    ],
+    "execution_mode": "sequential",
+    "required_tools": [
+      "file_reader",
+      "report_generator",
+      "pattern_detector"
+    ],
+    "required_inputs": "Custom analysis workflow for testing",
+    "expected_outputs": [
+      "file_analysis",
+      "network_analysis"
+    ],
+    "tags": [
+      "analysis",
+      "reporting",
+      "data",
+      "file",
+      "documentation",
+      "pattern",
+      "import",
+      "statistics"
+    ],
+    "version": "1.0",
+    "created_at": 1756777538.890805,
+    "last_modified": 1756777538.890805,
+    "usage_count": 0,
+    "success_rate": 0.0,
+    "avg_execution_time": 0.0,
+    "adaptation_rules": [],
+    "optimization_hints": {}
+  },
+  "dynamic_1756777648_d1adb778": {
+    "template_id": "dynamic_1756777648_d1adb778",
+    "name": "Dynamic Workflow - Custom analysis workflow...",
+    "description": "Dynamically generated workflow for: Custom analysis workflow",
+    "category": "analysis",
+    "complexity": "moderate",
+    "steps": [
+      {
+        "step_id": "step_1",
+        "name": "Report Generation",
+        "description": "Generate comprehensive reports",
+        "tool_name": "report_generator",
+        "tool_category": "reporting",
+        "parameters": {},
+        "dependencies": [],
+        "estimated_duration": 15.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "step_2",
+        "name": "Pattern Analysis",
+        "description": "Analyze patterns in data",
+        "tool_name": "pattern_detector",
+        "tool_category": "analysis",
+        "parameters": {},
+        "dependencies": [
+          "step_1"
+        ],
+        "estimated_duration": 20.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "step_3",
+        "name": "Data Import",
+        "description": "Import data from various sources",
+        "tool_name": "file_reader",
+        "tool_category": "data_processing",
+        "parameters": {},
+        "dependencies": [
+          "step_2"
+        ],
+        "estimated_duration": 5.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      }
+    ],
+    "execution_mode": "sequential",
+    "required_tools": [
+      "report_generator",
+      "pattern_detector",
+      "file_reader"
+    ],
+    "required_inputs": "Custom analysis workflow for testing",
+    "expected_outputs": [
+      "file_analysis",
+      "network_analysis"
+    ],
+    "tags": [
+      "pattern",
+      "data",
+      "file",
+      "analysis",
+      "reporting",
+      "import",
+      "documentation",
+      "statistics"
+    ],
+    "version": "1.0",
+    "created_at": 1756777648.01403,
+    "last_modified": 1756777648.0140312,
+    "usage_count": 0,
+    "success_rate": 0.0,
+    "avg_execution_time": 0.0,
+    "adaptation_rules": [],
+    "optimization_hints": {}
+  },
+  "dynamic_1756777735_6adf11e2": {
+    "template_id": "dynamic_1756777735_6adf11e2",
+    "name": "Dynamic Workflow - Custom analysis workflow...",
+    "description": "Dynamically generated workflow for: Custom analysis workflow",
+    "category": "analysis",
+    "complexity": "moderate",
+    "steps": [
+      {
+        "step_id": "step_1",
+        "name": "Pattern Analysis",
+        "description": "Analyze patterns in data",
+        "tool_name": "pattern_detector",
+        "tool_category": "analysis",
+        "parameters": {},
+        "dependencies": [],
+        "estimated_duration": 20.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "step_2",
+        "name": "Report Generation",
+        "description": "Generate comprehensive reports",
+        "tool_name": "report_generator",
+        "tool_category": "reporting",
+        "parameters": {},
+        "dependencies": [
+          "step_1"
+        ],
+        "estimated_duration": 15.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      },
+      {
+        "step_id": "step_3",
+        "name": "Data Import",
+        "description": "Import data from various sources",
+        "tool_name": "file_reader",
+        "tool_category": "data_processing",
+        "parameters": {},
+        "dependencies": [
+          "step_2"
+        ],
+        "estimated_duration": 5.0,
+        "retry_count": 0,
+        "timeout": 300.0,
+        "parallel_execution": false,
+        "conditional_execution": null,
+        "output_mapping": {}
+      }
+    ],
+    "execution_mode": "sequential",
+    "required_tools": [
+      "file_reader",
+      "pattern_detector",
+      "report_generator"
+    ],
+    "required_inputs": "Custom analysis workflow for testing",
+    "expected_outputs": [
+      "file_analysis",
+      "network_analysis"
+    ],
+    "tags": [
+      "data",
+      "import",
+      "file",
+      "documentation",
+      "reporting",
+      "analysis",
+      "pattern",
+      "statistics"
+    ],
+    "version": "1.0",
+    "created_at": 1756777735.31267,
+    "last_modified": 1756777735.31267,
+    "usage_count": 0,
+    "success_rate": 0.0,
+    "avg_execution_time": 0.0,
+    "adaptation_rules": [],
+    "optimization_hints": {}
+  }
+}

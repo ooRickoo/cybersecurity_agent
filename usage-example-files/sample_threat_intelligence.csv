@@ -1,0 +1,11 @@
+ioc_type,ioc_value,threat_actor,malware_family,confidence_level,first_seen,last_seen,source,description
+ip_address,192.168.1.100,APT29,Cozy Bear,high,2025-01-10,2025-01-15,threat_feed,Command and control server for APT29 operations
+domain,malicious-domain.com,Unknown,Generic,medium,2025-01-12,2025-01-14,user_report,Phishing domain used in recent campaign
+file_hash,5d41402abc4b2a76b9719d911017c592,APT28,Fancy Bear,high,2025-01-08,2025-01-13,malware_analysis,Malware sample from Fancy Bear campaign
+url,http://suspicious-site.org/download.exe,Unknown,Generic,medium,2025-01-11,2025-01-12,network_monitoring,URL hosting malicious payload
+email,phishing@fake-bank.com,Unknown,Generic,high,2025-01-09,2025-01-14,email_analysis,Phishing email address used in banking fraud
+ip_address,10.0.0.50,Unknown,Generic,low,2025-01-13,2025-01-13,network_scan,Internal IP showing suspicious behavior
+domain,evil-corp.net,APT32,OceanLotus,high,2025-01-07,2025-01-15,threat_intel,APT32 infrastructure domain
+file_hash,a1b2c3d4e5f6789012345678901234567890abcd,Unknown,Generic,medium,2025-01-12,2025-01-12,malware_analysis,Unknown malware sample
+url,https://fake-update.com/installer.msi,Unknown,Generic,high,2025-01-10,2025-01-14,user_report,Fake software update URL
+email,support@compromised-company.com,Unknown,Generic,medium,2025-01-11,2025-01-13,email_analysis,Compromised email account

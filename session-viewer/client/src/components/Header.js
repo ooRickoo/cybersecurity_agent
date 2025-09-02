@@ -9,7 +9,7 @@ import {
   Settings
 } from 'lucide-react';
 
-const Header = ({ onMenuClick, isConnected }) => {
+const Header = ({ onMenuClick, isConnected, sidebarOpen, onSidebarToggle }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -47,6 +47,16 @@ const Header = ({ onMenuClick, isConnected }) => {
             onClick={onMenuClick}
             className="lg:hidden p-2 rounded-lg bg-cyber-light/60 hover:bg-cyber-light/80 text-cyber-accent transition-colors duration-200"
             aria-label="Open menu"
+          >
+            <Menu size={20} />
+          </button>
+          
+          {/* Desktop Sidebar Toggle Button */}
+          <button
+            onClick={onSidebarToggle}
+            className="hidden lg:flex p-2 rounded-lg bg-cyber-light/60 hover:bg-cyber-light/80 text-cyber-accent transition-colors duration-200"
+            aria-label={sidebarOpen ? "Hide sidebar" : "Show sidebar"}
+            title={sidebarOpen ? "Hide sidebar" : "Show sidebar"}
           >
             <Menu size={20} />
           </button>
