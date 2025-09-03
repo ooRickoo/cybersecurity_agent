@@ -1867,130 +1867,104 @@ class MCPServer:
         return score
     
     def get_workflow_templates(self, workflow_type: str = None) -> Dict[str, Any]:
-        """Get predefined workflow templates for common cybersecurity tasks."""
-        templates = {
-            "threat_investigation": {
-                "name": "Threat Investigation Workflow",
-                "description": "Complete workflow for investigating security threats",
-                "steps": [
-                    {
-                        "step": 1,
-                        "tool": "extract_archive",
-                        "description": "Extract suspicious archive files",
-                        "category": "compression"
-                    },
-                    {
-                        "step": 2,
-                        "tool": "convert_file",
-                        "description": "Convert logs to analyzable format",
-                        "category": "file"
-                    },
-                    {
-                        "step": 3,
-                        "tool": "query_dataframe",
-                        "description": "Analyze log data for anomalies",
-                        "category": "dataframe"
-                    },
-                    {
-                        "step": 4,
-                        "tool": "create_node",
-                        "description": "Create threat entities in graph",
-                        "category": "neo4j"
-                    },
-                    {
-                        "step": 5,
-                        "tool": "write_html_report",
-                        "description": "Generate investigation report",
-                        "category": "file"
+        """Get available workflow templates from the unified manager."""
+        try:
+            from bin.unified_workflow_template_manager import get_unified_workflow_template_manager
+            manager = get_unified_workflow_template_manager()
+            
+            if workflow_type:
+                # Get specific workflow type
+                template = manager.get_template(workflow_type)
+                if template:
+                    templates = {
+                        template.template_id: {
+                            "name": template.name,
+                            "description": template.description,
+                            "category": template.category,
+                            "complexity": template.complexity,
+                            "steps": [
+                                {
+                                    "step": i + 1,
+                                    "tool": step.tool_name,
+                                    "description": step.description,
+                                    "category": step.tool_category
+                                }
+                                for i, step in enumerate(template.steps)
+                            ],
+                            "estimated_duration": f"{template.average_execution_time:.0f} minutes",
+                            "complexity": template.complexity
+                        }
                     }
-                ],
-                "estimated_duration": "15-30 minutes",
-                "complexity": "medium"
-            },
-            "data_analysis": {
-                "name": "Data Analysis Workflow",
-                "description": "Workflow for comprehensive data analysis",
-                "steps": [
-                    {
-                        "step": 1,
-                        "tool": "convert_file",
-                        "description": "Convert data to analysis format",
-                        "category": "file"
-                    },
-                    {
-                        "step": 2,
-                        "tool": "query_dataframe",
-                        "description": "Perform data analysis",
-                        "category": "dataframe"
-                    },
-                    {
-                        "step": 3,
-                        "tool": "write_markdown_report",
-                        "description": "Document analysis results",
-                        "category": "file"
+                    return {
+                        "workflow_type": workflow_type,
+                        "available_templates": [template.template_id],
+                        "templates": templates
                     }
-                ],
-                "estimated_duration": "10-20 minutes",
-                "complexity": "low"
-            },
-            "forensic_analysis": {
-                "name": "Forensic Analysis Workflow",
-                "description": "Complete forensic analysis workflow",
-                "steps": [
-                    {
-                        "step": 1,
-                        "tool": "extract_archive",
-                        "description": "Extract forensic images",
-                        "category": "compression"
-                    },
-                    {
-                        "step": 2,
-                        "tool": "list_archive_contents",
-                        "description": "Inventory extracted contents",
-                        "category": "compression"
-                    },
-                    {
-                        "step": 3,
-                        "tool": "convert_file",
-                        "description": "Convert evidence to analyzable format",
-                        "category": "file"
-                    },
-                    {
-                        "step": 4,
-                        "tool": "query_dataframe",
-                        "description": "Analyze evidence data",
-                        "category": "dataframe"
-                    },
-                    {
-                        "step": 5,
-                        "tool": "create_node",
-                        "description": "Build evidence graph",
-                        "category": "neo4j"
-                    },
-                    {
-                        "step": 6,
-                        "tool": "write_html_report",
-                        "description": "Generate forensic report",
-                        "category": "file"
-                    }
-                ],
-                "estimated_duration": "30-60 minutes",
-                "complexity": "high"
+                return {
+                    "workflow_type": workflow_type,
+                    "available_templates": [],
+                    "templates": {}
+                }
+            else:
+                # Get all templates
+                templates = {}
+                for template_id in manager.list_templates():
+                    template = manager.get_template(template_id)
+                    if template:
+                        templates[template_id] = {
+                            "name": template.name,
+                            "description": template.description,
+                            "category": template.category,
+                            "complexity": template.complexity,
+                            "steps": [
+                                {
+                                    "step": i + 1,
+                                    "tool": step.tool_name,
+                                    "description": step.description,
+                                    "category": step.tool_category
+                                }
+                                for i, step in enumerate(template.steps)
+                            ],
+                            "estimated_duration": f"{template.average_execution_time:.0f} minutes",
+                            "complexity": template.complexity
+                        }
+                
+                return {
+                    "available_templates": list(templates.keys()),
+                    "templates": templates
+                }
+                
+        except Exception as e:
+            self.logger.error(f"Error getting workflow templates: {e}")
+            # Fallback to basic templates
+            templates = {
+                "threat_investigation": {
+                    "name": "Threat Investigation Workflow",
+                    "description": "Complete workflow for investigating security threats",
+                    "steps": [
+                        {
+                            "step": 1,
+                            "tool": "extract_archive",
+                            "description": "Extract suspicious archive files",
+                            "category": "compression"
+                        }
+                    ],
+                    "estimated_duration": "15-30 minutes",
+                    "complexity": "medium"
+                }
             }
-        }
-        
-        if workflow_type and workflow_type in templates:
+            
+            if workflow_type:
+                return {
+                    "workflow_type": workflow_type,
+                    "available_templates": list(templates.keys()),
+                    "templates": {workflow_type: templates.get(workflow_type, {})}
+                }
+            
             return {
-                "success": True,
-                "template": templates[workflow_type]
+                "available_templates": list(templates.keys()),
+                "templates": templates
             }
-        
-        return {
-            "success": True,
-            "available_templates": list(templates.keys()),
-            "templates": templates
-        }
-    
     def validate_workflow(self, workflow_steps: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Validate a proposed workflow for feasibility and completeness."""
         validation_results = []
