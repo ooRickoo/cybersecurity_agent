@@ -28,7 +28,7 @@ import time
 import hashlib
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Union, Tuple, Callable
-from .openai_llm_client import OpenAILLMClient, LLMConfig, ModelType, ResponseFormat
+from .llm_client import LLMClient, LLMConfig, ModelType, ResponseFormat, OpenAILLMClient
 from dataclasses import dataclass, asdict
 from enum import Enum
 import os
@@ -81,8 +81,8 @@ class MCPServer:
         self.tool_manager = None  # Will be set when available
         self.session_logger = None  # Will be set when available
         
-        # OpenAI configuration
-        self.llm_client = OpenAILLMClient()
+        # LLM configuration
+        self.llm_client = LLMClient()
         self.openai_configured = self.llm_client.is_available()
         
         # Register built-in tools
@@ -2949,9 +2949,9 @@ Choose the SINGLE most appropriate category:"""
     
     def _call_openai_api(self, system_prompt: str, user_prompt: str, model: str = "gpt-4", 
                          max_tokens: int = 1000, temperature: float = 0.3) -> Dict[str, Any]:
-        """Make a call to the OpenAI API using the centralized LLM client."""
+        """Make a call to the LLM API using the centralized LLM client."""
         if not self.llm_client.is_available():
-            return {"success": False, "error": "OpenAI LLM client not available"}
+            return {"success": False, "error": "LLM client not available"}
         
         # Map model string to ModelType enum
         model_mapping = {

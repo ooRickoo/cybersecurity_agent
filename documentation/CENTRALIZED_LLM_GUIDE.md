@@ -1,14 +1,14 @@
-# Centralized OpenAI LLM Client Guide
+# Centralized LLM Client Guide
 
 ## Overview
 
-The Cybersecurity Agent now uses a centralized OpenAI LLM client component that provides a unified interface for all AI-powered features across the system. This centralization improves maintainability, reduces code duplication, and provides consistent error handling, cost tracking, and usage statistics.
+The Cybersecurity Agent now uses a centralized LLM client component that provides a unified interface for all AI-powered features across the system. This centralization improves maintainability, reduces code duplication, and provides consistent error handling, cost tracking, and usage statistics.
 
 ## Architecture
 
 ### Core Components
 
-1. **`bin/openai_llm_client.py`** - Centralized LLM client
+1. **`bin/llm_client.py`** - Centralized LLM client
 2. **`bin/cs_ai_tools.py`** - Updated to use centralized client
 3. **`bin/langgraph_cybersecurity_agent.py`** - Updated to use centralized client
 
@@ -26,10 +26,10 @@ The Cybersecurity Agent now uses a centralized OpenAI LLM client component that 
 ### Basic Text Generation
 
 ```python
-from bin.openai_llm_client import OpenAILLMClient, LLMConfig, ModelType
+from bin.llm_client import LLMClient, LLMConfig, ModelType
 
 # Create client
-client = OpenAILLMClient()
+client = LLMClient()
 
 # Check availability
 if client.is_available():
@@ -107,7 +107,7 @@ export OPENAI_BASE_URL="https://api.openai.com/v1"  # For custom endpoints
 ### Model Selection
 
 ```python
-from bin.openai_llm_client import ModelType
+from bin.llm_client import ModelType
 
 # Available models
 ModelType.GPT_4              # Most capable, highest cost
@@ -119,7 +119,7 @@ ModelType.GPT_3_5_TURBO_16K  # Extended context window
 ### Response Formats
 
 ```python
-from bin.openai_llm_client import ResponseFormat
+from bin.llm_client import ResponseFormat
 
 ResponseFormat.TEXT      # Plain text (default)
 ResponseFormat.JSON      # Structured JSON
@@ -246,9 +246,9 @@ response = client.chat.completions.create(
 
 ```python
 # New centralized approach
-from bin.openai_llm_client import OpenAILLMClient, LLMConfig, ModelType
+from bin.llm_client import LLMClient, LLMConfig, ModelType
 
-client = OpenAILLMClient()
+client = LLMClient()
 response = client.generate_text(
     prompt="prompt",
     config=LLMConfig(model=ModelType.GPT_4, max_tokens=1000)

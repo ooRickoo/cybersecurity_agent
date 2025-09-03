@@ -4211,15 +4211,15 @@ class LangGraphCybersecurityAgent:
             # Initialize LLM client for insights
             llm_client = None
             try:
-                from bin.openai_llm_client import OpenAILLMClient
-                llm_client = OpenAILLMClient()
+                from bin.llm_client import LLMClient
+                llm_client = LLMClient()
                 if llm_client.is_available():
-                    print("🤖 OpenAI LLM client initialized for patent analysis")
+                    print("🤖 LLM client initialized for patent analysis")
                 else:
-                    print("⚠️  OpenAI LLM client not available. Patent analysis will continue without LLM insights.")
+                    print("⚠️  LLM client not available. Patent analysis will continue without LLM insights.")
                     llm_client = None
             except Exception as e:
-                print(f"⚠️  OpenAI client initialization failed: {e}")
+                print(f"⚠️  LLM client initialization failed: {e}")
                 print("   Continuing without LLM insights...")
                 llm_client = None
             
